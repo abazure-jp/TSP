@@ -3,13 +3,13 @@ clc;
 clear;
 figure;
 
-% ‚Ü‚¸Šeƒm[ƒh‚ğƒvƒƒbƒg‚·‚éB
-% ‚¿‚Èƒm[ƒh“ss‚Å‚·B
+% ã¾ãšå„ãƒãƒ¼ãƒ‰ã‚’ãƒ—ãƒ­ãƒƒãƒˆã™ã‚‹ã€‚
+% ã¡ãªãƒãƒ¼ãƒ‰ï¼éƒ½å¸‚ã§ã™ã€‚
 load('usborder.mat','x','y','xx','yy');
 rng(3,'twister') % makes a plot with stops in Maine & Florida, and is reproducible
 nStops =  50; % you can use any number, but the problem size scales as N^2
-timesNeighbor = 10; % ‹ß–T’Tõ‚Ì‰ñ”
-sizeTabuList = 30; % TabuList‚ÌƒTƒCƒYB‹ß–T’Tõ‚Ì‰ñ”‚ğ‰z‚¦‚é‚æ‚¤‚Éİ’è‚µ‚½‚Ù‚¤‚ª‚¢‚¢‚Ì‚©‚ÈH
+timesNeighbor = 10; % è¿‘å‚æ¢ç´¢ã®å›æ•°
+sizeTabuList = 30; % TabuListã®ã‚µã‚¤ã‚ºã€‚è¿‘å‚æ¢ç´¢ã®å›æ•°ã‚’è¶Šãˆã‚‹ã‚ˆã†ã«è¨­å®šã—ãŸã»ã†ãŒã„ã„ã®ã‹ãªï¼Ÿ
 stopsLon = zeros(nStops,1); % allocate x-coordinates of nStops
 stopsLat = stopsLon; % allocate y-coordinates
 
@@ -28,37 +28,37 @@ hold on
 plot(stopsLon,stopsLat,'*b')
 hold off
 
-% idxs: Ÿ‚É‘S‚Ä‚Ìƒuƒ‰ƒ“ƒ`‚ğ–Ô—…‚µ‚½õˆø
+% idxs: æ¬¡ã«å…¨ã¦ã®ãƒ–ãƒ©ãƒ³ãƒã‚’ç¶²ç¾…ã—ãŸç´¢å¼•
 idxs = nchoosek(1:nStops,2);
 
-% dist: Šeƒuƒ‰ƒ“ƒ`‚ÌƒRƒXƒg‚ğAˆÜ“xŒo“x‚ğ‚Â‚©‚Á‚½ƒsƒ^ƒSƒ‰ƒX‚Ì’è—‚ÅŒvZ‚·‚éB
+% dist: å„ãƒ–ãƒ©ãƒ³ãƒã®ã‚³ã‚¹ãƒˆã‚’ã€ç·¯åº¦çµŒåº¦ã‚’ã¤ã‹ã£ãŸãƒ”ã‚¿ã‚´ãƒ©ã‚¹ã®å®šç†ã§è¨ˆç®—ã™ã‚‹ã€‚
 dist = hypot(stopsLat(idxs(:,1)) - stopsLat(idxs(:,2)), ...
              stopsLon(idxs(:,1)) - stopsLon(idxs(:,2)));
 
-% idxs‚Ædist‚ğ˜AŒ‹‚³‚¹‚½Œo˜H«‘‚Ìì¬
+% idxsã¨distã‚’é€£çµã•ã›ãŸçµŒè·¯è¾æ›¸ã®ä½œæˆ
 distMap = containers.Map;
-% idxs‚ÍNs‚Q—ñ‚Ìs—ñ‚Å‚ ‚èA‚»‚ê‚¼‚ê‚Ì—ñ‚ÉˆÙ‚È‚é“ss”Ô†‚ªŠi”[‚³‚ê‚Ä‚¢‚éB
-% ‚±‚Ì“ñ“_‚ğˆê‚Â‚Ì•¶š—ñ‚Æ‚µ‚Ä˜AŒ‹‚µA˜A‘z”z—ñ‚ÌƒL[‚Æ‚µ‚Äˆµ‚¤B
+% idxsã¯Nè¡Œï¼’åˆ—ã®è¡Œåˆ—ã§ã‚ã‚Šã€ãã‚Œãã‚Œã®åˆ—ã«ç•°ãªã‚‹éƒ½å¸‚ç•ªå·ãŒæ ¼ç´ã•ã‚Œã¦ã„ã‚‹ã€‚
+% ã“ã®äºŒç‚¹ã‚’ä¸€ã¤ã®æ–‡å­—åˆ—ã¨ã—ã¦é€£çµã—ã€é€£æƒ³é…åˆ—ã®ã‚­ãƒ¼ã¨ã—ã¦æ‰±ã†ã€‚
 for i = 1:size(idxs,1)
     key = strcat(num2str(idxs(i,1)),'&',num2str(idxs(i,2)));
     value = dist(i);
     distMap(key) = value;
 end
 
-% lendsit: ƒuƒ‰ƒ“ƒ`‚Ì‘”BnStops*(nstops-1)/2
+% lendsit: ãƒ–ãƒ©ãƒ³ãƒã®ç·æ•°ã€‚nStops*(nstops-1)/2
 lendist = length(dist);
 
-% –³ìˆ×‚È‰Šú’l‚ğo—ÍB
+% ç„¡ä½œç‚ºãªåˆæœŸå€¤ã‚’å‡ºåŠ›ã€‚
 initTour = getInitTour(nStops);
 
-% ‘‹——£‚ğŒvZ‚·‚éB
+% ç·è·é›¢ã‚’è¨ˆç®—ã™ã‚‹ã€‚
 totalCost = getTotalDist(initTour,distMap);
-% TODO: Œ»İ‚ÌƒcƒA[‚ğƒOƒ‰ƒt‚É•\¦‚·‚é
+% TODO: ç¾åœ¨ã®ãƒ„ã‚¢ãƒ¼ã‚’ã‚°ãƒ©ãƒ•ã«è¡¨ç¤ºã™ã‚‹
 
 %% TabuSearch
 tour = initTour;
-% ‰Šú’l‚Ì‹ß–T’Tõ‚ğs‚È‚¤
-% Œ»İ‚ÌƒcƒA[‚Ì“àAj”Ô–Ú‚Æk”Ô–Ú(j!=k,j != 1, k != 1)‚ğ“ü‚ê‘Ö‚¦‚éB‚±‚ê‚ğtimesNeighbor‰ñs‚È‚¤B
+% åˆæœŸå€¤ã®è¿‘å‚æ¢ç´¢ã‚’è¡Œãªã†
+% ç¾åœ¨ã®ãƒ„ã‚¢ãƒ¼ã®å†…ã€jç•ªç›®ã¨kç•ªç›®(j!=k,j != 1, k != 1)ã‚’å…¥ã‚Œæ›¿ãˆã‚‹ã€‚ã“ã‚Œã‚’timesNeighborå›è¡Œãªã†ã€‚
   tabuTour = initTour;
   tabuTourCost = totalCost;
 for i = 1:timesNeighbor
@@ -74,7 +74,7 @@ for i = 1:timesNeighbor
   tabuTour = [ tabuTour ; neighborTour];
   tabuTourCost = [ tabuTourCost ; neighborTourCost];
 
-  % TabuList‚ÌƒTƒCƒY‚ğ¬‚³‚­‚·‚é‚½‚ß‚É‘S‚Ä‚ÌŒo˜H‚Å‚Í‚È‚­•ÏX‚µ‚½’l‚¾‚¯‚ğ•Û‚µ‚Ä‚¨‚­B
+  % TabuListã®ã‚µã‚¤ã‚ºã‚’å°ã•ãã™ã‚‹ãŸã‚ã«å…¨ã¦ã®çµŒè·¯ã§ã¯ãªãå¤‰æ›´ã—ãŸå€¤ã ã‘ã‚’ä¿æŒã—ã¦ãŠãã€‚
 end
 
 
