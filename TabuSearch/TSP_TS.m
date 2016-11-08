@@ -1,3 +1,4 @@
+close all;
 clc;
 clear;
 figure;
@@ -6,9 +7,12 @@ figure;
 % ちなノード＝都市です。
 load('usborder.mat','x','y','xx','yy');
 rng(3,'twister') % makes a plot with stops in Maine & Florida, and is reproducible
-nStops =  10; % you can use any number, but the problem size scales as N^2
+nStops =  50; % you can use any number, but the problem size scales as N^2
+timesNeighbor = 10; % 近傍探索の回数
+sizeTabuList = 30; % TabuListのサイズ。近傍探索の回数を越えるように設定したほうがいいのかな？
 stopsLon = zeros(nStops,1); % allocate x-coordinates of nStops
 stopsLat = stopsLon; % allocate y-coordinates
+
 n = 1;
 while (n <= nStops)
     xp = rand*1.5;
@@ -45,13 +49,32 @@ end
 lendist = length(dist);
 
 % 無作為な初期値を出力。
-initTour = getInitTour(nStops)
+initTour = getInitTour(nStops);
 
 % 総距離を計算する。
 totalCost = getTotalDist(initTour,distMap);
 % TODO: 現在のツアーをグラフに表示する
 
+%% TabuSearch
+tour = initTour;
+% 初期値の近傍探索を行なう
+% 現在のツアーの内、j番目とk番目(j!=k,j != 1, k != 1)を入れ替える。これをtimesNeighbor回行なう。
+  tabuTour = initTour;
+  tabuTourCost = totalCost;
+for i = 1:timesNeighbor
+  j = randi(nStops);
+  k = randi(nStops);
+  while j == k || j == 1 || k == 1
+    j = randi(nStops);
+    k = randi(nStops);
+  end
 
+  neighborTour = getNeighborhood(tour,j,k);
+  neighborTourCost = getTotalDist(neighborTour,distMap);
+  tabuTour = [ tabuTour ; neighborTour];
+  tabuTourCost = [ tabuTourCost ; neighborTourCost];
 
+  % TabuListのサイズを小さくするために全ての経路ではなく変更した値だけを保持しておく。
+end
 
 

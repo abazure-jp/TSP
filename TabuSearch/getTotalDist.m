@@ -21,6 +21,6 @@ function totalDist = getTotalDist(tour,distMap)
     from = num2str(from);
     to = num2str(to);
 
-    totalDist = totalDist + distMap(strcat(from,'&',to))
+    totalDist = totalDist + distMap(strcat(from,'&',to));
   end
 end
