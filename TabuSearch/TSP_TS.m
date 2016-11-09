@@ -7,10 +7,10 @@ figure;
 % ちなノード＝都市です。
 load('usborder.mat','x','y','xx','yy');
 rng(3,'twister') % makes a plot with stops in Maine & Florida, and is reproducible
-nStops =  50; % you can use any number, but the problem size scales as N^2
-times = 30; % 探索の回数
-timesNeighbor = 10; % 近傍探索の回数
-sizeTabuList = 30; % TabuListのサイズ。近傍探索の回数を越えるように設定したほうがいいのかな？
+nStops =  100; % you can use any number, but the problem size scales as N^2
+times = 3000; % 探索の回数
+timesNeighbor = 100; % 近傍探索の回数
+sizeTabuList = timesNeighbor * 4; % TabuListのサイズ。近傍探索の回数を越えるように設定したほうがいいのかな？
 stopsLon = zeros(nStops,1); % allocate x-coordinates of nStops
 stopsLat = stopsLon; % allocate y-coordinates
 neighborTours = [];
@@ -57,7 +57,14 @@ initTour = getInitTour(nStops);
 
 % 総距離を計算する。
 totalCost = getTotalDist(initTour,distMap);
-% TODO: plot the path in the graph
+
+% plot the path in the graph
+figure;
+plot(x,y,'Color','red'); % draw the outside border
+hold on
+plot(stopsLon,stopsLat,'*b')
+drawTourPath(stopsLon,stopsLat,initTour);
+hold off
 
 %% TabuSearch
 tour = initTour;
