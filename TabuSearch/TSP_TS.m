@@ -74,11 +74,18 @@ for i = 1:timesNeighbor
   neighborTour = getNeighborhood(tour,j,k);
   neighborTours = [ neighborTours ; neighborTour ];
   neighborTourCost = getTotalDist(neighborTour,distMap);
-  neighborTourCosts = [ neighborTourCosts ; neighborTourCost];
-  tabuTour = [ tabuTour ; neighborTour];
-  tabuTourCost = [ tabuTourCost ; neighborTourCost];
+  neighborTourCosts = [ neighborTourCosts ; neighborTourCost ];
+  tabuTour = [ tabuTour ; neighborTour ];
+  tabuTourCost = [ tabuTourCost ; neighborTourCost ];
 end
 
 %% 近傍探索の結果から最良なものを判定する
 %% あくまで近傍のリストとタブーサーチは別物であることに留意
 tour_localmin = getBetterSolution(neighborTour,neighborTourCost)
+
+
+
+
+
+
+
