@@ -3,8 +3,6 @@ clc;
 clear;
 figure;
 
-% まず各ノードをプロットする。
-% ちなノード＝都市です。
 load('usborder.mat','x','y','xx','yy');
 rng(3,'twister') % makes a plot with stops in Maine & Florida, and is reproducible
 nStops =  10; % you can use any number, but the problem size scales as N^2
