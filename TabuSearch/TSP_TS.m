@@ -8,7 +8,9 @@ figure;
 load('usborder.mat','x','y','xx','yy');
 rng(3,'twister') % makes a plot with stops in Maine & Florida, and is reproducible
 nStops =  10; % you can use any number, but the problem size scales as N^2
-times = 300; % 探索の回数
+times = 50; % 探索の回数
+:q
+q:q
 timesNeighbor = 50; % 近傍探索の回数
 sizeTabuList = timesNeighbor * 4; % TabuListのサイズ。近傍探索の回数を越えるように設定したほうがいいのかな？
 stopsLon = zeros(nStops,1); % allocate x-coordinates of nStops
@@ -16,6 +18,7 @@ stopsLat = stopsLon; % allocate y-coordinates
 neighborTours = [];
 neighborTourCosts = [];
 theBestTour = [];
+theBestCosts = [];
 
 n = 1;
 while (n <= nStops)
@@ -58,7 +61,7 @@ initTour = getInitTour(nStops);
 
 % 総距離を計算する。
 totalCost = getTotalDist(initTour,distMap);
-
+theBestCosts = [ totalCost ];
 % plot the path in the graph
 figure;
 plot(x,y,'Color','red'); % draw the outside border
@@ -87,8 +90,8 @@ for( n = 1:times )
     neighborTourCost = getTotalDist(neighborTour,distMap);
 
     % 見つけた近傍がタブーに触れるようであれば、局所解の選考リストには含めない
-    if checkTabuList(tabuList,neighborTour)
-      display('Tabu');
+    if checkTabuList(tabuList,neighborTour) == 1
+      % display('Tabu');
     else
       neighborTours = [ neighborTours ; neighborTour ];
       neighborTourCosts = [ neighborTourCosts ; neighborTourCost ];
@@ -111,6 +114,7 @@ for( n = 1:times )
   if getTotalDist(tour,distMap) < getTotalDist(theBestTour,distMap)
     theBestTour = tour;
   end
+  theBestCosts = [theBestCosts ; getTotalDist(theBestTour,distMap);];
 end
 
 % 可視化
