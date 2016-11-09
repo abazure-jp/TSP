@@ -121,3 +121,9 @@ plot(stopsLon,stopsLat,'*b')
 drawTourPath(stopsLon,stopsLat,theBestTour);
 hold off
 
+% 各時点での最小値の遷移
+figure;
+plot(theBestCosts,'LineWidth',2);
+xlabel('iteration');
+ylabel('Best Cost');
+grid on;
