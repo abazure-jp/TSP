@@ -12,6 +12,8 @@ timesNeighbor = 10; % 近傍探索の回数
 sizeTabuList = 30; % TabuListのサイズ。近傍探索の回数を越えるように設定したほうがいいのかな？
 stopsLon = zeros(nStops,1); % allocate x-coordinates of nStops
 stopsLat = stopsLon; % allocate y-coordinates
+neighborTours = [];
+neighborTourCosts = [];
 
 n = 1;
 while (n <= nStops)
@@ -59,8 +61,8 @@ totalCost = getTotalDist(initTour,distMap);
 tour = initTour;
 % 初期値の近傍探索を行なう
 % 現在のツアーの内、j番目とk番目(j!=k,j != 1, k != 1)を入れ替える。これをtimesNeighbor回行なう。
-  tabuTour = initTour;
-  tabuTourCost = totalCost;
+tabuTour = initTour;
+tabuTourCost = totalCost;
 for i = 1:timesNeighbor
   j = randi(nStops);
   k = randi(nStops);
@@ -70,11 +72,13 @@ for i = 1:timesNeighbor
   end
 
   neighborTour = getNeighborhood(tour,j,k);
+  neighborTours = [ neighborTours ; neighborTour ];
   neighborTourCost = getTotalDist(neighborTour,distMap);
+  neighborTourCosts = [ neighborTourCosts ; neighborTourCost];
   tabuTour = [ tabuTour ; neighborTour];
   tabuTourCost = [ tabuTourCost ; neighborTourCost];
-
-  % TabuListのサイズを小さくするために全ての経路ではなく変更した値だけを保持しておく。
 end
 
-
+%% 近傍探索の結果から最良なものを判定する
+%% あくまで近傍のリストとタブーサーチは別物であることに留意
+tour_localmin = getBetterSolution(neighborTour,neighborTourCost)
