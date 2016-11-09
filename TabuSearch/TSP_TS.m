@@ -27,11 +27,6 @@ while (n <= nStops)
     end
 end
 
-plot(x,y,'Color','red'); % draw the outside border
-hold on
-plot(stopsLon,stopsLat,'*b')
-hold off
-
 % idxs: 次に全てのブランチを網羅した索引
 idxs = nchoosek(1:nStops,2);
 
