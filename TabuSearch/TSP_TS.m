@@ -8,6 +8,7 @@ figure;
 load('usborder.mat','x','y','xx','yy');
 rng(3,'twister') % makes a plot with stops in Maine & Florida, and is reproducible
 nStops =  50; % you can use any number, but the problem size scales as N^2
+times = 30; % 探索の回数
 timesNeighbor = 10; % 近傍探索の回数
 sizeTabuList = 30; % TabuListのサイズ。近傍探索の回数を越えるように設定したほうがいいのかな？
 stopsLon = zeros(nStops,1); % allocate x-coordinates of nStops
@@ -59,33 +60,30 @@ totalCost = getTotalDist(initTour,distMap);
 
 %% TabuSearch
 tour = initTour;
-% 初期値の近傍探索を行なう
-% 現在のツアーの内、j番目とk番目(j!=k,j != 1, k != 1)を入れ替える。これをtimesNeighbor回行なう。
-tabuTour = initTour;
-tabuTourCost = totalCost;
-for i = 1:timesNeighbor
-  j = randi(nStops);
-  k = randi(nStops);
-  while j == k || j == 1 || k == 1
+
+for( n = 1:times)
+  % 初期値の近傍探索を行なう
+  % 現在のツアーの内、j番目とk番目(j!=k,j != 1, k != 1)を入れ替える。これをtimesNeighbor回行なう。
+  tabuTour = initTour;
+  tabuTourCost = totalCost;
+  for i = 1:timesNeighbor
     j = randi(nStops);
     k = randi(nStops);
+    while j == k || j == 1 || k == 1
+      j = randi(nStops);
+      k = randi(nStops);
+    end
+
+    neighborTour = getNeighborhood(tour,j,k);
+    neighborTours = [ neighborTours ; neighborTour ];
+    neighborTourCost = getTotalDist(neighborTour,distMap);
+    neighborTourCosts = [ neighborTourCosts ; neighborTourCost ];
+    tabuTour = [ tabuTour ; neighborTour ];
+    tabuTourCost = [ tabuTourCost ; neighborTourCost ];
   end
 
-  neighborTour = getNeighborhood(tour,j,k);
-  neighborTours = [ neighborTours ; neighborTour ];
-  neighborTourCost = getTotalDist(neighborTour,distMap);
-  neighborTourCosts = [ neighborTourCosts ; neighborTourCost ];
-  tabuTour = [ tabuTour ; neighborTour ];
-  tabuTourCost = [ tabuTourCost ; neighborTourCost ];
+  %% 近傍探索の結果から最良なものを判定する
+  %% あくまで近傍のリストとタブーサーチは別物であることに留意
+  tour_localmin = getBetterSolution(neighborTour,neighborTourCost)
+  tour = tour_localmin(1,2:end); % tour_localmin = [ cost city_a city_e city_d ... ]
 end
-
-%% 近傍探索の結果から最良なものを判定する
-%% あくまで近傍のリストとタブーサーチは別物であることに留意
-tour_localmin = getBetterSolution(neighborTour,neighborTourCost)
-
-
-
-
-
-
-
