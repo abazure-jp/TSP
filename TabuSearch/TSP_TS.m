@@ -7,9 +7,9 @@ figure;
 % ちなノード＝都市です。
 load('usborder.mat','x','y','xx','yy');
 rng(3,'twister') % makes a plot with stops in Maine & Florida, and is reproducible
-nStops =  100; % you can use any number, but the problem size scales as N^2
-times = 3000; % 探索の回数
-timesNeighbor = 100; % 近傍探索の回数
+nStops =  10; % you can use any number, but the problem size scales as N^2
+times = 300; % 探索の回数
+timesNeighbor = 50; % 近傍探索の回数
 sizeTabuList = timesNeighbor * 4; % TabuListのサイズ。近傍探索の回数を越えるように設定したほうがいいのかな？
 stopsLon = zeros(nStops,1); % allocate x-coordinates of nStops
 stopsLat = stopsLon; % allocate y-coordinates
@@ -108,8 +108,8 @@ for( n = 1:times )
   neighborTours = [];
   neighborTourCosts = [];
   % 過去のベストな値との比較をして、優れば更新
-  if getTotalDist(tour_locamin,distMap) < getTotalDist(theBestTour,distMap)
-    theBestTour = tour_localmin;
+  if getTotalDist(tour,distMap) < getTotalDist(theBestTour,distMap)
+    theBestTour = tour;
   end
 end
 
