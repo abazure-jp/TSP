@@ -15,6 +15,7 @@ stopsLon = zeros(nStops,1); % allocate x-coordinates of nStops
 stopsLat = stopsLon; % allocate y-coordinates
 neighborTours = [];
 neighborTourCosts = [];
+theBestTour = [];
 
 n = 1;
 while (n <= nStops)
@@ -69,6 +70,7 @@ hold off
 %% TabuSearch
 tour = initTour;
 tabuList = initTour;
+theBestTour = initTour;
 
 for( n = 1:times )
 % 現在のツアーの内、j番目とk番目(j!=k,j != 1, k != 1)を入れ替える。
@@ -105,7 +107,17 @@ for( n = 1:times )
   tour = tour_localmin(1,2:end); % tour_localmin = [ cost city_a city_e city_d ... ]
   neighborTours = [];
   neighborTourCosts = [];
+  % 過去のベストな値との比較をして、優れば更新
+  if getTotalDist(tour_locamin,distMap) < getTotalDist(theBestTour,distMap)
+    theBestTour = tour_localmin;
+  end
 end
 
 % 可視化
+figure;
+plot(x,y,'Color','red'); % draw the outside border
+hold on
+plot(stopsLon,stopsLat,'*b')
+drawTourPath(stopsLon,stopsLat,theBestTour);
+hold off
 
