@@ -26,6 +26,7 @@ while (n <= nStops)
         n = n+1;
     end
 end
+
 plot(x,y,'Color','red'); % draw the outside border
 hold on
 plot(stopsLon,stopsLat,'*b')
@@ -56,16 +57,15 @@ initTour = getInitTour(nStops);
 
 % 総距離を計算する。
 totalCost = getTotalDist(initTour,distMap);
-% TODO: 現在のツアーをグラフに表示する
+% TODO: plot the path in the graph
 
 %% TabuSearch
 tour = initTour;
+tabuList = initTour;
 
-for( n = 1:times)
-  % 初期値の近傍探索を行なう
-  % 現在のツアーの内、j番目とk番目(j!=k,j != 1, k != 1)を入れ替える。これをtimesNeighbor回行なう。
-  tabuTour = initTour;
-  tabuTourCost = totalCost;
+for( n = 1:times )
+% 現在のツアーの内、j番目とk番目(j!=k,j != 1, k != 1)を入れ替える。
+% これを近傍探索とと定義してtimesNeighbor回繰り返す
   for i = 1:timesNeighbor
     j = randi(nStops);
     k = randi(nStops);
@@ -75,15 +75,30 @@ for( n = 1:times)
     end
 
     neighborTour = getNeighborhood(tour,j,k);
-    neighborTours = [ neighborTours ; neighborTour ];
     neighborTourCost = getTotalDist(neighborTour,distMap);
-    neighborTourCosts = [ neighborTourCosts ; neighborTourCost ];
-    tabuTour = [ tabuTour ; neighborTour ];
-    tabuTourCost = [ tabuTourCost ; neighborTourCost ];
+
+    % 見つけた近傍がタブーに触れるようであれば、局所解の選考リストには含めない
+    if checkTabuList(tabuList,neighborTour)
+      display('Tabu');
+    else
+      neighborTours = [ neighborTours ; neighborTour ];
+      neighborTourCosts = [ neighborTourCosts ; neighborTourCost ];
+    end
+
+    % tabuListが埋まったらデキューしてリストサイズを保つ
+    tabuList = [ tabuList ; neighborTour ];
+    if size(tabuList,1) > sizeTabuList
+      tabuList = tabuList(2:end,:);
+    end
   end
 
   %% 近傍探索の結果から最良なものを判定する
   %% あくまで近傍のリストとタブーサーチは別物であることに留意
-  tour_localmin = getBetterSolution(neighborTour,neighborTourCost)
+  tour_localmin = getBetterSolution(neighborTour,neighborTourCost);
   tour = tour_localmin(1,2:end); % tour_localmin = [ cost city_a city_e city_d ... ]
+  neighborTours = [];
+  neighborTourCosts = [];
 end
+
+% 可視化
+
