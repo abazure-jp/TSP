@@ -5,8 +5,8 @@ clear;
 load('usborder.mat','x','y','xx','yy');
 % rng(3,'twister') % makes a plot with stops in Maine & Florida, and is reproducible
 nStops =  48; % you can use any number, but the problem size scales as N^2
-times = 99; % 探索の回数
-timesNeighbor = 300; % 近傍探索の回数
+times = 199; % 探索の回数
+timesNeighbor = 30; % 近傍探索の回数
 sizeTabuList = timesNeighbor * times * 0.3;
 stopsLon = zeros(nStops,1); % allocate x-coordinates of nStops
 stopsLat = stopsLon; % allocate y-coordinates
@@ -68,8 +68,9 @@ tabuList = initTour;
 theBestTour = initTour;
 
 for( n = 1:times )
+  display(n);
 % 現在のツアーの内、j番目とk番目(j!=k,j != 1, k != 1)を入れ替える。
-% これを近傍探索とと定義してtimesNeighbor回繰り返す
+% これを近傍探索と定義してtimesNeighbor回繰り返す
   for i = 1:timesNeighbor
     flag = 1;
     % 近傍探索の乱数を選考する。タブーリストにかぶれば乱数選考をやり直す

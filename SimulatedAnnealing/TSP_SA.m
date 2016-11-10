@@ -59,21 +59,32 @@ plot(stopsLon,stopsLat,'*b')
 drawTourPath(stopsLon,stopsLat,initTour);
 hold off
 
+
+tour = initTour;
 %% Simulated Annealing
 theBestTour = initTour;
+while temperature > 0
 
-for( n = 1:times )
-% 現在のツアーの内、j番目とk番目(j!=k,j != 1, k != 1)を入れ替える。
-% これを近傍探索とと定義してtimesNeighbor回繰り返す
-  for i = 1:timesNeighbor
-    newTour = getInitTour(nStops);
-
-  if getTotalDist(newTour,distMap) < getTotalDist(theBestTour,distMap)
-    theBestTour = newTour;
-  else
-
+  % まず近傍を出す
+  j = randi(nStops);
+  k = randi(nStops);
+  while j == k || j == 1 || k == 1
+    j = randi(nStops);
+    k = randi(nStops);
   end
-  theBestCosts = [theBestCosts ; getTotalDist(theBestTour,distMap);];
+  neighborTour = getNeighborhood(tour,j,k);
+
+  % よいスコアならtourを更新する
+  tourCost = getTotalDist(tour,distMap)
+  neighborTourCost = getTotalDist(neighborTour,distMap)
+
+  if getTotalDist(tour,distMap) < getTotalDist(neighborTour,distMap)
+    tour = neighborTour;
+  elseif rand <= exp(temperature'*(neighborTourCost - tourCost))
+    %悪いスコアでも確率pでtourを更新する
+    tour = neighborTour;
+  end
+
 end
 
 % 可視化
