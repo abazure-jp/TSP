@@ -5,8 +5,8 @@ clear;
 load('usborder.mat','x','y','xx','yy');
 rng(3,'twister') % makes a plot with stops in Maine & Florida, and is reproducible
 nStops =  20; % you can use any number, but the problem size scales as N^2
-times = 599; % 探索の回数
-timesNeighbor = 5; % 近傍探索の回数
+times = 499; % 探索の回数
+timesNeighbor = 30; % 近傍探索の回数
 sizeTabuList = timesNeighbor * times * 0.3;
 stopsLon = zeros(nStops,1); % allocate x-coordinates of nStops
 stopsLat = stopsLon; % allocate y-coordinates
@@ -71,23 +71,24 @@ for( n = 1:times )
 % 現在のツアーの内、j番目とk番目(j!=k,j != 1, k != 1)を入れ替える。
 % これを近傍探索とと定義してtimesNeighbor回繰り返す
   for i = 1:timesNeighbor
+
+    % 近傍探索の乱数を選考する。タブーリストにかぶれば乱数選考をやり直す
     j = randi(nStops);
     k = randi(nStops);
     while j == k || j == 1 || k == 1
       j = randi(nStops);
       k = randi(nStops);
     end
-
-    neighborTour = getNeighborhood(tour,j,k);
-    neighborTourCost = getTotalDist(neighborTour,distMap);
-
-    % 見つけた近傍がタブーに触れるようであれば、局所解の選考リストには含めない
-    if checkTabuList(tabuList,neighborTour) == 1
-      % display('Tabu');
-    else
-      neighborTours = [ neighborTours ; neighborTour ];
-      neighborTourCosts = [ neighborTourCosts ; neighborTourCost ];
+    while 1
+      neighborTour = getNeighborhood(tour,j,k);
+      if checkTabuList(tabuList,neighborTour) == 0
+        break;
+      end
     end
+
+    neighborTourCost = getTotalDist(neighborTour,distMap);
+    neighborTours = [ neighborTours ; neighborTour ];
+    neighborTourCosts = [ neighborTourCosts ; neighborTourCost ];
 
     % tabuListが埋まったらデキューしてリストサイズを保つ
     tabuList = [ tabuList ; neighborTour ];
