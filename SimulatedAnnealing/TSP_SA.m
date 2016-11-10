@@ -6,17 +6,15 @@ load('usborder.mat','x','y','xx','yy');
 rng(3,'twister') % makes a plot with stops in Maine & Florida, and is reproducible
 nStops =  20; % you can use any number, but the problem size scales as N^2
 times = 499; % 探索の回数
-timesNeighbor = 30; % 近傍探索の回数
-sizeTabuList = timesNeighbor * times * 0.3;
+temperature = 2500;
+cool_coefficient = 1;
 stopsLon = zeros(nStops,1); % allocate x-coordinates of nStops
 stopsLat = stopsLon; % allocate y-coordinates
-neighborTours = [];
-neighborTourCosts = [];
 theBestTour = [];
 theBestCosts = [];
-localminCosts = [];
-n = 1;
 
+
+n = 1;
 while (n <= nStops)
     xp = rand*1.5;
     yp = rand;
@@ -62,51 +60,19 @@ plot(stopsLon,stopsLat,'*b')
 drawTourPath(stopsLon,stopsLat,initTour);
 hold off
 
-%% TabuSearch
-tour = initTour;
-tabuList = initTour;
+%% Simulated Annealing
 theBestTour = initTour;
 
 for( n = 1:times )
 % 現在のツアーの内、j番目とk番目(j!=k,j != 1, k != 1)を入れ替える。
 % これを近傍探索とと定義してtimesNeighbor回繰り返す
   for i = 1:timesNeighbor
+    newTour = getInitTour(nStops);
 
-    % 近傍探索の乱数を選考する。タブーリストにかぶれば乱数選考をやり直す
-    j = randi(nStops);
-    k = randi(nStops);
-    while j == k || j == 1 || k == 1
-      j = randi(nStops);
-      k = randi(nStops);
-    end
-    while 1
-      neighborTour = getNeighborhood(tour,j,k);
-      if checkTabuList(tabuList,neighborTour) == 0
-        break;
-      end
-    end
+  if getTotalDist(newTour,distMap) < getTotalDist(theBestTour,distMap)
+    theBestTour = newTour;
+  else
 
-    neighborTourCost = getTotalDist(neighborTour,distMap);
-    neighborTours = [ neighborTours ; neighborTour ];
-    neighborTourCosts = [ neighborTourCosts ; neighborTourCost ];
-
-    % tabuListが埋まったらデキューしてリストサイズを保つ
-    tabuList = [ tabuList ; neighborTour ];
-    if size(tabuList,1) > sizeTabuList
-      tabuList = tabuList(2:end,:);
-    end
-  end
-
-  %% 近傍探索の結果から最良なものを判定する
-  %% あくまで近傍のリストとタブーサーチは別物であることに留意
-  tour_localmin = getBetterSolution(neighborTour,neighborTourCost);
-  tour = tour_localmin(1,2:end); % tour_localmin = [ cost city_a city_e city_d ... ]
-  neighborTours = [];
-  neighborTourCosts = [];
-  localminCosts = [localminCosts ; getTotalDist(tour,distMap);];
-  % 過去のベストな値との比較をして、優れば更新
-  if getTotalDist(tour,distMap) < getTotalDist(theBestTour,distMap)
-    theBestTour = tour;
   end
   theBestCosts = [theBestCosts ; getTotalDist(theBestTour,distMap);];
 end
