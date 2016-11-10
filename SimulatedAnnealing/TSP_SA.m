@@ -13,7 +13,6 @@ stopsLat = stopsLon; % allocate y-coordinates
 theBestTour = [];
 theBestCosts = [];
 
-
 n = 1;
 while (n <= nStops)
     xp = rand*1.5;
