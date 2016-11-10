@@ -2,8 +2,7 @@ function initTour = getInitTour(numOfCities)
   initTour = zeros(1,numOfCities);
   initTour(1,1) = 1; % スタート地点は必ず都市番号1とする
 
-
-  % passedCities: 行番号は都市番号。列はブール代数で、０なら未、1なら既の通過確認ベクトル
+  % passedCities: 行番号は都市番号。各要素にはブール代数が入り、該当都市が通過済であれば1、でなければ0
   passedCities = zeros(1,numOfCities);
   % 開始地点はすでに通過しているものとする
   passedCities(1,1) = 1;

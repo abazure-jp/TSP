@@ -1,14 +1,13 @@
 close all;
 clc;
 clear;
-figure;
 
 load('usborder.mat','x','y','xx','yy');
 rng(3,'twister') % makes a plot with stops in Maine & Florida, and is reproducible
 nStops =  20; % you can use any number, but the problem size scales as N^2
-times = 500; % 探索の回数
-timesNeighbor = 30; % 近傍探索の回数
-sizeTabuList = timesNeighbor * 4; % TabuListのサイズ。近傍探索の回数を越えるように設定したほうがいいのかな？
+times = 599; % 探索の回数
+timesNeighbor = 5; % 近傍探索の回数
+sizeTabuList = timesNeighbor * times * 0.3;
 stopsLon = zeros(nStops,1); % allocate x-coordinates of nStops
 stopsLat = stopsLon; % allocate y-coordinates
 neighborTours = [];
@@ -17,6 +16,7 @@ theBestTour = [];
 theBestCosts = [];
 localminCosts = [];
 n = 1;
+
 while (n <= nStops)
     xp = rand*1.5;
     yp = rand;
