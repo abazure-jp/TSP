@@ -5,9 +5,9 @@ figure;
 
 load('usborder.mat','x','y','xx','yy');
 rng(3,'twister') % makes a plot with stops in Maine & Florida, and is reproducible
-nStops =  10; % you can use any number, but the problem size scales as N^2
-times = 50; % 探索の回数
-timesNeighbor = 50; % 近傍探索の回数
+nStops =  20; % you can use any number, but the problem size scales as N^2
+times = 500; % 探索の回数
+timesNeighbor = 30; % 近傍探索の回数
 sizeTabuList = timesNeighbor * 4; % TabuListのサイズ。近傍探索の回数を越えるように設定したほうがいいのかな？
 stopsLon = zeros(nStops,1); % allocate x-coordinates of nStops
 stopsLat = stopsLon; % allocate y-coordinates
@@ -15,7 +15,7 @@ neighborTours = [];
 neighborTourCosts = [];
 theBestTour = [];
 theBestCosts = [];
-
+localminCosts = [];
 n = 1;
 while (n <= nStops)
     xp = rand*1.5;
@@ -53,6 +53,7 @@ initTour = getInitTour(nStops);
 % 総距離を計算する。
 totalCost = getTotalDist(initTour,distMap);
 theBestCosts = [ totalCost ];
+
 % plot the path in the graph
 figure;
 plot(x,y,'Color','red'); % draw the outside border
@@ -101,6 +102,7 @@ for( n = 1:times )
   tour = tour_localmin(1,2:end); % tour_localmin = [ cost city_a city_e city_d ... ]
   neighborTours = [];
   neighborTourCosts = [];
+  localminCosts = [localminCosts ; getTotalDist(tour,distMap);];
   % 過去のベストな値との比較をして、優れば更新
   if getTotalDist(tour,distMap) < getTotalDist(theBestTour,distMap)
     theBestTour = tour;
@@ -121,4 +123,11 @@ figure;
 plot(theBestCosts,'LineWidth',2);
 xlabel('iteration');
 ylabel('Best Cost');
+grid on;
+
+% 各近傍探索の最小値
+figure;
+plot(localminCosts,'LineWidth',2);
+xlabel('iteration');
+ylabel('LocalMin Cost');
 grid on;
