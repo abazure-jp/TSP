@@ -2,7 +2,7 @@ close all;
 clc;
 clear;
 
-p = path
+p = path;
 pathAssets = strcat(pwd,'/assets/');
 path(path,pathAssets);
 
@@ -72,7 +72,6 @@ tabuList = initTour;
 theBestTour = initTour;
 
 for( n = 1:times )
-  display(n);
   % 現在のツアーの内、j番目とk番目(j!=k,j != 1, k != 1)を入れ替える。
   % これを近傍探索と定義してtimesNeighbor回繰り返す
   for i = 1:timesNeighbor
@@ -139,7 +138,7 @@ grid on;
 figure;
 plot(localminCosts,'LineWidth',2);
 xlabel('iteration');
-ylabel('LocalMin Cost');
+ylabel('Best Neighborhood Cost');
 grid on;
 
 % reset path
