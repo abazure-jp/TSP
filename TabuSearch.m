@@ -2,6 +2,10 @@ close all;
 clc;
 clear;
 
+p = path
+pathAssets = strcat(pwd,'/assets/');
+path(path,pathAssets);
+
 load('usborder.mat','x','y','xx','yy');
 % rng(3,'twister') % makes a plot with stops in Maine & Florida, and is reproducible
 nStops =  48; % you can use any number, but the problem size scales as N^2
@@ -69,8 +73,8 @@ theBestTour = initTour;
 
 for( n = 1:times )
   display(n);
-% 現在のツアーの内、j番目とk番目(j!=k,j != 1, k != 1)を入れ替える。
-% これを近傍探索と定義してtimesNeighbor回繰り返す
+  % 現在のツアーの内、j番目とk番目(j!=k,j != 1, k != 1)を入れ替える。
+  % これを近傍探索と定義してtimesNeighbor回繰り返す
   for i = 1:timesNeighbor
     flag = 1;
     % 近傍探索の乱数を選考する。タブーリストにかぶれば乱数選考をやり直す
@@ -137,3 +141,6 @@ plot(localminCosts,'LineWidth',2);
 xlabel('iteration');
 ylabel('LocalMin Cost');
 grid on;
+
+% reset path
+p = path
