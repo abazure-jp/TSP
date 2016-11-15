@@ -21,7 +21,7 @@ stopsLat = stopsLon; % allocate y-coordinates
 theBestCosts = zeros(times+1,1);
 neighborTours = zeros(timesNeighbor,nStops);
 neighborTourCosts = zeros(timesNeighbor,1);
-localminCosts = zeros(times+1,1);
+bestNeighborCosts = zeros(times+1,1);
 n = 1;
 
 while (n <= nStops)
@@ -109,7 +109,7 @@ for n = 1:times
   tour = tour_localmin(1,2:end); % tour_localmin = [ cost city_a city_e city_d ... ]
   neighborTours = [];
   neighborTourCosts = [];
-  localminCosts(n,1) =  getTotalDist(tour,distMap);
+  bestNeighborCosts(n,1) =  getTotalDist(tour,distMap);
   % 過去のベストな値との比較をして、優れば更新
   if getTotalDist(tour,distMap) < getTotalDist(theBestTour,distMap)
     theBestTour = tour;
@@ -134,7 +134,7 @@ grid on;
 
 % 各近傍探索の最小値
 figure('Name','Best value of each neighborhood search','NumberTitle','off')
-plot(localminCosts,'LineWidth',2);
+plot(bestNeighborCosts,'LineWidth',2);
 xlabel('iteration');
 ylabel('Best Neighborhood Cost');
 grid on;
