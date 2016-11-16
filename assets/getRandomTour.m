@@ -1,4 +1,4 @@
-function initTour = getInitTour(numOfCities)
+function initTour = getRandomTour(numOfCities)
   initTour = zeros(1,numOfCities);
   initTour(1,1) = 1; % スタート地点は必ず都市番号1とする
 
