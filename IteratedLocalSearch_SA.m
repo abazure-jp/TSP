@@ -14,14 +14,14 @@ nStops =  48; % you can use any number, but the problem size scales as N^2
 times = 199; % 探索の回数
 timesNeighbor = 30; % 近傍探索の回数
 sizeTabuList = timesNeighbor * times * 0.3;
-theBestCosts = zeros(times+1,1);
-neighborTours = zeros(timesNeighbor,nStops);
-neighborTourCosts = zeros(timesNeighbor,1);
-bestNeighborCosts = zeros(times+1,1);
 
 stopsLon = zeros(nStops,1); % allocate x-coordinates of nStops
 stopsLat = stopsLon; % allocate y-coordinates
 
+theBestCosts = zeros(times+1,1);
+neighborTours = zeros(timesNeighbor,nStops);
+neighborTourCosts = zeros(timesNeighbor,1);
+bestNeighborCosts = zeros(times+1,1);
 n = 1;
 
 while (n <= nStops)
@@ -34,7 +34,7 @@ while (n <= nStops)
     end
 end
 
-% idxs: 全てのブランチを網羅した索引
+% idxs: 次に全てのブランチを網羅した索引
 idxs = nchoosek(1:nStops,2);
 
 % dist: 各ブランチのコストを、緯度経度をつかったピタゴラスの定理で計算する。

@@ -1,6 +1,20 @@
-# Tabu Search
+# Some method to solve Travel Salesman Problem (TSP)
+ご存知巡回セールスマン問題(TSP)を色んな方法で取り組んでみた。
+都市を巡る旅程は、都市番号が入ったベクトル`tour`で表現し、列番号が訪れる順番を表現する。例えば５つの都市を1->4->3->2->5という順で巡る場合、`tour=[ 1 4 3 2 5]`と表現される。
 
-# Simulated Anealing
+## Tabu Search
+`tour`の近傍をtimesNighbor回探索し、その中で最小の経路となるものを`next_tour`とする。
+`tour = next_tour`として、近傍探索を行なう。
+このループを、`times`回行なう。
+この探索を行なう時、過去`timesNeighbor * times * 0.3`回のツアーを記憶しこれをTabuListと呼び、乱数選択による近傍探索で得たツアーがTabuListに含まれていれば乱数選択をやり直す。
 
-# Iterated Local Search
+この探索では近傍探索に`2-opt`と呼ばれる手法を採用している。この手法では`tour`内のi番目の要素とj番目の要素を入れ替える。ただしTSPでは開始地点は変更しないため`i != j!= 1`となる。
+
+## Simulated Anealing
+
+
+## Iterated Local Search
+何らかの探索で最小解の更新がある期間行われなかった場合に、そこを局所解として保持した後、再度新しい初期値から探索をしよう。これをN回行おう！という探索。
+ただし新しい初期値は「今までに無いやつを選ぼうぜ！」という感じに選ぶんすよ…！
+
 

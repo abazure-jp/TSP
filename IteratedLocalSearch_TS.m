@@ -19,6 +19,9 @@ neighborTours = zeros(timesNeighbor,nStops);
 neighborTourCosts = zeros(timesNeighbor,1);
 bestNeighborCosts = zeros(times+1,1);
 
+%% --- params of IteratedLocalSearch
+
+
 stopsLon = zeros(nStops,1); % allocate x-coordinates of nStops
 stopsLat = stopsLon; % allocate y-coordinates
 
@@ -64,58 +67,64 @@ plot(stopsLon,stopsLat,'*b')
 drawTourPath(stopsLon,stopsLat,initTour);
 hold off
 
-%% TabuSearch
-tour = initTour;
-tabuList = initTour;
-theBestTour = initTour;
 
-for n = 1:times
-  % 現在のツアーの内、j番目とk番目(j!=k,j != 1, k != 1)を入れ替える。
-  % これを近傍探索と定義してtimesNeighbor回繰り返す
-  for i = 1:timesNeighbor
-    flag = 1;
-    % 近傍探索の乱数を選考する。タブーリストにかぶれば乱数選考をやり直す
-    j = randi(nStops);
-    k = randi(nStops);
+%% Iterated Local Search
+for N = 1:Iterater
 
-    while  flag == 1
-      if j == k || j == 1 || k == 1
-        j = randi(nStops);
-        k = randi(nStops);
-      else
-        neighborTour = getNeighborhood(tour,j,k);
-        if checkTabuList(tabuList,neighborTour) == 0
-          flag = 0;
+  %% TabuSearch
+  tour = initTour;
+  tabuList = initTour;
+  theBestTour = initTour;
+
+  for n = 1:times
+    % 現在のツアーの内、j番目とk番目(j!=k,j != 1, k != 1)を入れ替える。
+    % これを近傍探索と定義してtimesNeighbor回繰り返す
+    for i = 1:timesNeighbor
+      flag = 1;
+      % 近傍探索の乱数を選考する。タブーリストにかぶれば乱数選考をやり直す
+      j = randi(nStops);
+      k = randi(nStops);
+
+      while  flag == 1
+        if j == k || j == 1 || k == 1
+          j = randi(nStops);
+          k = randi(nStops);
         else
-          j = k;
+          neighborTour = getNeighborhood(tour,j,k);
+          if checkTabuList(tabuList,neighborTour) == 0
+            flag = 0;
+          else
+            j = k;
+          end
         end
+      end
+
+      neighborTourCost = getTotalDist(neighborTour,distMap);
+      neighborTours(i,:) = neighborTour;
+      neighborTourCosts(i,:) = neighborTourCost;
+
+      % tabuListが埋まったらデキューしてリストサイズを保つ
+      tabuList = [ tabuList ; neighborTour ];
+      if size(tabuList,1) > sizeTabuList
+        tabuList = tabuList(2:end,:);
       end
     end
 
-    neighborTourCost = getTotalDist(neighborTour,distMap);
-    neighborTours(i,:) = neighborTour;
-    neighborTourCosts(i,:) = neighborTourCost;
-
-    % tabuListが埋まったらデキューしてリストサイズを保つ
-    tabuList = [ tabuList ; neighborTour ];
-    if size(tabuList,1) > sizeTabuList
-      tabuList = tabuList(2:end,:);
+    %% 近傍探索の結果から最良なものを判定する
+    %% あくまで近傍のリストとタブーサーチは別物であることに留意
+    tour_localmin = getBetterSolution(neighborTour,neighborTourCost);
+    tour = tour_localmin(1,2:end); % tour_localmin = [ cost city_a city_e city_d ... ]
+    neighborTours = [];
+    neighborTourCosts = [];
+    bestNeighborCosts(n,1) =  getTotalDist(tour,distMap);
+    % 過去のベストな値との比較をして、優れば更新
+    if getTotalDist(tour,distMap) < getTotalDist(theBestTour,distMap)
+      theBestTour = tour;
     end
-  end
+    theBestCosts(n+1,1) = getTotalDist(theBestTour,distMap);
+  end %% end of Tabu search
+end %% end of iterated local search
 
-  %% 近傍探索の結果から最良なものを判定する
-  %% あくまで近傍のリストとタブーサーチは別物であることに留意
-  tour_localmin = getBetterSolution(neighborTour,neighborTourCost);
-  tour = tour_localmin(1,2:end); % tour_localmin = [ cost city_a city_e city_d ... ]
-  neighborTours = [];
-  neighborTourCosts = [];
-  bestNeighborCosts(n,1) =  getTotalDist(tour,distMap);
-  % 過去のベストな値との比較をして、優れば更新
-  if getTotalDist(tour,distMap) < getTotalDist(theBestTour,distMap)
-    theBestTour = tour;
-  end
-  theBestCosts(n+1,1) = getTotalDist(theBestTour,distMap);
-end
 
 % 可視化
 figure('Name','Best Tour','NumberTitle','off')
