@@ -1,4 +1,5 @@
 function tour = getRandomTour(numOfCities)
+  load('usborder.mat','x','y','xx','yy');
   tour = zeros(1,numOfCities);
   tour(1,1) = 1; % スタート地点は必ず都市番号1とする
 

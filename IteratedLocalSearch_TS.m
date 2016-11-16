@@ -6,9 +6,9 @@ p = path;
 pathAssets = strcat(pwd,'/assets/');
 path(path,pathAssets);
 
-load('usborder.mat','x','y','xx','yy');
 % rng(3,'twister') % makes a plot with stops in Maine & Florida, and is reproducible
 nStops =  48; % you can use any number, but the problem size scales as N^2
+load('usborder.mat','x','y','xx','yy');
 
 %% --- params of TabuSearch
 times = 199; % 探索の回数
@@ -70,6 +70,9 @@ hold off
 
 %% Iterated Local Search
 for N = 1:Iterater
+
+
+
 
   %% TabuSearch
   tour = initTour;
