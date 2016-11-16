@@ -1,13 +1,6 @@
-function [ bestCost bestTour ] = doTabuSearch(times,timesNeighbor,sizeTabuList,nStops,initTour)
-
+function [ bestCost bestTour ] = doTabuSearch(distMap,stopsLon,stopsLat,times,timesNeighbor,sizeTabuList,nStops,initTour,doPlot)
   load('usborder.mat','x','y','xx','yy');
   % rng(3,'twister') % makes a plot with stops in Maine & Florida, and is reproducible
-  %  nStops =  48; % you can use any number, but the problem size scales as N^2
-
-  %% --- params of TabuSearch
-  %  times =  99; % 探索の回数
-  %  timesNeighbor = 30; % 近傍探索の回数
-  % sizeTabuList = timesNeighbor * times * 0.3;
 
   bestCosts = zeros(times+1,1);
   neighborTours = zeros(timesNeighbor,nStops);
@@ -15,17 +8,8 @@ function [ bestCost bestTour ] = doTabuSearch(times,timesNeighbor,sizeTabuList,n
   bestNeighborCosts = zeros(times,1);
 
   %% initialize
-  [distMap stopsLon stopsLat] = initCities(nStops);
   totalCost = getTotalDist(initTour,distMap);
   bestCosts(1,1) =  totalCost;
-
-  % plot the path in the graph
-  figure('Name','Initial Tour','NumberTitle','off')
-  plot(x,y,'Color','red'); % draw the outside border
-  hold on
-  plot(stopsLon,stopsLat,'*b')
-  drawTourPath(stopsLon,stopsLat,initTour);
-  hold off
 
   %% TabuSearch
   tour = initTour;
@@ -37,7 +21,7 @@ function [ bestCost bestTour ] = doTabuSearch(times,timesNeighbor,sizeTabuList,n
     % これを近傍探索(2-opt)と定義してtimesNeighbor回繰り返す
     for i = 1:timesNeighbor
       flag = 1;
-      % 近傍探索の乱数を選考する。タブーリストにかぶれば乱数選考をやり直す
+      % 近傍探索の乱数を選考する。タブーリストに抵触するようであれば乱数選考をやり直す
       j = randi(nStops);
       k = randi(nStops);
 
@@ -80,27 +64,38 @@ function [ bestCost bestTour ] = doTabuSearch(times,timesNeighbor,sizeTabuList,n
     bestCosts(n+1,1) = getTotalDist(bestTour,distMap);
   end
 
-  % 可視化
-  figure('Name','Best Tour','NumberTitle','off')
-  plot(x,y,'Color','red'); % draw the outside border
-  hold on
-  plot(stopsLon,stopsLat,'*b')
-  drawTourPath(stopsLon,stopsLat,bestTour);
-  hold off
-
-  % 各時点での最小値の遷移
-  figure('Name','Best value of each iteration','NumberTitle','off')
-  plot(bestCosts,'LineWidth',2);
-  xlabel('iteration');
-  ylabel('Best Cost');
-  grid on;
-
-  % 各近傍探索の最小値
-  figure('Name','Best value of each neighborhood search','NumberTitle','off')
-  plot(bestNeighborCosts,'LineWidth',2);
-  xlabel('iteration');
-  ylabel('Best Neighborhood Cost');
-  grid on;
-
   bestCost = bestCosts(end,1);
+
+  %% 可視化
+  if doPlot == 1
+    % initTour
+    figure('Name','Initial Tour','NumberTitle','off')
+    plot(x,y,'Color','red'); % draw the outside border
+    hold on
+    plot(stopsLon,stopsLat,'*b')
+    drawTourPath(stopsLon,stopsLat,initTour);
+    hold off
+
+    % bestTour
+    figure('Name','Best Tour','NumberTitle','off')
+    plot(x,y,'Color','red'); % draw the outside border
+    hold on
+    plot(stopsLon,stopsLat,'*b')
+    drawTourPath(stopsLon,stopsLat,bestTour);
+    hold off
+
+    % 各時点での最小値の遷移
+    figure('Name','Best value of each iteration','NumberTitle','off')
+    plot(bestCosts,'LineWidth',2);
+    xlabel('iteration');
+    ylabel('Best Cost');
+    grid on;
+
+    % 各近傍探索の最小値
+    figure('Name','Best value of each neighborhood search','NumberTitle','off')
+    plot(bestNeighborCosts,'LineWidth',2);
+    xlabel('iteration');
+    ylabel('Best Neighborhood Cost');
+    grid on;
+  end
 end
