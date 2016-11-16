@@ -1,3 +1,9 @@
+% Befor use this repository, you have to add the path at once.
+% p = path;
+% pathAssets = strcat(pwd,'/assets/');
+% path(path,pathAssets);
+
+
 % rng(3,'twister') % makes a plot with stops in Maine & Florida, and is reproducible
 nStops =  48; % you can use any number, but the problem size scales as N^2
 
