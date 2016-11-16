@@ -16,4 +16,5 @@ neighborTours = zeros(timesNeighbor,nStops);
 neighborTourCosts = zeros(timesNeighbor,1);
 bestNeighborCosts = zeros(times,1);
 
-[bestCost bestTour] = doTabuSearch(times,timesNeighbor,sizeTabuList,nStops);
+initTour = getRandomTour(nStops);
+[bestCost bestTour] = doTabuSearch(times,timesNeighbor,sizeTabuList,nStops,initTour);
