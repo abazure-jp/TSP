@@ -17,7 +17,7 @@ sizeTabuList = timesNeighbor * times * 0.3;
 theBestCosts = zeros(times+1,1);
 neighborTours = zeros(timesNeighbor,nStops);
 neighborTourCosts = zeros(timesNeighbor,1);
-bestNeighborCosts = zeros(times+1,1);
+bestNeighborCosts = zeros(times,1);
 
 stopsLon = zeros(nStops,1); % allocate x-coordinates of nStops
 stopsLat = stopsLon; % allocate y-coordinates
@@ -54,7 +54,7 @@ end
 initTour = getInitTour(nStops);
 
 totalCost = getTotalDist(initTour,distMap);
-theBestCosts =  totalCost;
+theBestCosts(1,1) =  totalCost;
 
 % plot the path in the graph
 figure('Name','Initial Tour','NumberTitle','off')
