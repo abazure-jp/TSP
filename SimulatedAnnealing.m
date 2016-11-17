@@ -2,6 +2,9 @@
 % p = path;
 % pathAssets = strcat(pwd,'/assets/');
 % path(path,pathAssets);
+clc;
+close all;
+clear all;
 
 %% --- Create cities and map
 nStops = 100; % you can use any number, but the problem size scales as N^2

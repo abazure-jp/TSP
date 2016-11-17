@@ -2,13 +2,16 @@
 % p = path;
 % pathAssets = strcat(pwd,'/assets/');
 % path(path,pathAssets);
+clc;
+close all;
+clear all;
 
 %% --- Create cities and map
-nStops = 20; % you can use any number, but the problem size scales as N^2
+nStops = 100; % you can use any number, but the problem size scales as N^2
 [distMap stopsLon stopsLat] = initCities(nStops);
 
 %% --- params of TabuSearch
-times = 2499; % 探索の回数
+times = 499; % 探索の回数
 timesNeighbor = 30; % 近傍探索の回数
 sizeTabuList = times * 0.4; % sizeTabuList < nStops * ( nStops -1 ) * 1/2
 
