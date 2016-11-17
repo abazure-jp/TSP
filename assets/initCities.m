@@ -1,4 +1,4 @@
-function [distMap stopsLon stopsLat] = initCities(numCities)
+function [distMap, stopsLon, stopsLat] = initCities(numCities)
   load('usborder.mat','x','y','xx','yy');
   stopsLon = zeros(numCities,1); % allocate x-coordinates of numCities
   stopsLat = stopsLon; % allocate y-coordinates

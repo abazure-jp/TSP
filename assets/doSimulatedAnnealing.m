@@ -1,4 +1,4 @@
-function [ bestCost bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat,timesNeighbor,temperature,cool_coefficient,nStops,initTour,doPlot)
+function [ bestCost, bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat,timesNeighbor,temperature,cool_coefficient,nStops,initTour,doPlot)
   %% initialize
   load('usborder.mat','x','y','xx','yy');
   tourCost = getTotalDist(initTour,distMap);

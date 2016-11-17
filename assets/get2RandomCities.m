@@ -1,6 +1,6 @@
 % j != k && j != 1 && k != 1 && j < k
 % を満たすjとkを返す
-function  [ j k ] = get2RandomCities(nStops)
+function  [ j, k ] = get2RandomCities(nStops)
   j = randi(nStops);
   k = randi(nStops);
 

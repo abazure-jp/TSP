@@ -4,11 +4,11 @@
 % path(path,pathAssets);
 clc;
 close all;
-clear all;
+clear;
 
 %% --- Create cities and map
 nStops = 100; % you can use any number, but the problem size scales as N^2
-[distMap stopsLon stopsLat] = initCities(nStops);
+[distMap, stopsLon, stopsLat] = initCities(nStops);
 
 %% --- params of Simulated Aneealing
 temperature = 4000;
@@ -24,7 +24,7 @@ initTour = getRandomTour(nStops);
 %% --- Step2: LocalSearch(tour)
 % This code use Simulated Annealing (2-opt)
 doPlot = 0;
-[ bestCost bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat,temperature,cool_coefficient,nStops,initTour,doPlot)
+[ bestCost, bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat,temperature,cool_coefficient,nStops,initTour,doPlot);
 bestCosts(1,1) = bestCost;
 
 %% --- Step3: LocalSearch(tour)
@@ -37,7 +37,7 @@ bestCosts(1,1) = bestCost;
 
 for i = 1:iterate
   nextInitTour = getInversedTour(bestTour);
-  [ bestCost bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat,temperature,cool_coefficient,nStops,initTour,doPlot)
+  [ bestCost, bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat,temperature,cool_coefficient,nStops,initTour,doPlot);
   bestCosts(i+1,1) = bestCost;
 end
 
