@@ -33,7 +33,7 @@ function [ bestCost bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat,
     elseif rand <= exp(temperature'*(neighborTourCost - tourCost))
       tour = neighborTour;
     end
-    temperature = cool_coefficient * temperature
+    temperature = cool_coefficient * temperature;
     temperature_hist = [temperature_hist;temperature];
     tourCost = getTotalDist(tour,distMap);
     eachCosts = [eachCosts ; tourCost];
@@ -73,7 +73,6 @@ function [ bestCost bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat,
     grid on;
 
     % 温度の推移
-    temperature_hist
     figure('Name','Temperatures','NumberTitle','off')
     plot(temperature_hist,'LineWidth',2);
     xlabel('Iteration');
