@@ -1,13 +1,17 @@
-function [ bestCost bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat,times,temperature,cool_coefficient,nStops,initTour,doPlot)
-  load('usborder.mat','x','y','xx','yy');
-  bestCosts = zeros(times+1,1);
+function [ bestCost bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat,temperature,cool_coefficient,nStops,initTour,doPlot)
   %% initialize
-  totalCost = getTotalDist(initTour,distMap);
-  bestCosts(1,1) =  totalCost;
+  load('usborder.mat','x','y','xx','yy');
+  tourCost = getTotalDist(initTour,distMap);
+  bestCost = tourCost;
+  eachCosts = [tourCost];
+  bestCosts = [bestCost];
+  bestTour = initTour;
+  tour = initTour;
+
+  temperature_hist = [temperature];
 
   %% Simulated Annealing
-  theBestTour = initTour;
-  while temperature > 0
+  while temperature > 10
     % まず近傍を出す
     j = randi(nStops);
     k = randi(nStops);
@@ -16,18 +20,24 @@ function [ bestCost bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat,
       k = randi(nStops);
     end
     neighborTour = getNeighborhood(tour,j,k);
+    neighborTourCost = getTotalDist(neighborTour,distMap);
 
-    % よいスコアならtourを更新する
-    tourCost = getTotalDist(tour,distMap)
-    neighborTourCost = getTotalDist(neighborTour,distMap)
-
-    if getTotalDist(tour,distMap) < getTotalDist(neighborTour,distMap)
+    % 近傍がより優れていれば(小さければ)、tourを更新する
+    if neighborTourCost <= tourCost
       tour = neighborTour;
+      if neighborTourCost <= bestCost
+        bestCost = neighborTourCost;
+        bestTour = neighborTour;
+      end
+      % 悪い場合でも、確率で更新する。
     elseif rand <= exp(temperature'*(neighborTourCost - tourCost))
-      %悪いスコアでも確率pでtourを更新する
       tour = neighborTour;
     end
-
+    temperature = cool_coefficient * temperature
+    temperature_hist = [temperature_hist;temperature];
+    tourCost = getTotalDist(tour,distMap);
+    eachCosts = [eachCosts ; tourCost];
+    bestCosts = [bestCosts ; bestCost];
   end
 
   % 可視化
@@ -51,15 +61,23 @@ function [ bestCost bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat,
     % 各時点での最小値の遷移
     figure('Name','Best value of each iteration','NumberTitle','off')
     plot(bestCosts,'LineWidth',2);
-    xlabel('iteration');
+    xlabel('Iteration');
     ylabel('Best Cost');
     grid on;
 
-    % 各近傍探索の最小値
-    figure('Name','Best value of each neighborhood search','NumberTitle','off')
-    plot(bestNeighborCosts,'LineWidth',2);
-    xlabel('iteration');
-    ylabel('Best Neighborhood Cost');
+    % 探索の推移
+    figure('Name','Value of each iteration','NumberTitle','off')
+    plot(eachCosts,'LineWidth',2);
+    xlabel('Iteration');
+    ylabel('Cost');
+    grid on;
+
+    % 温度の推移
+    temperature_hist
+    figure('Name','Temperatures','NumberTitle','off')
+    plot(temperature_hist,'LineWidth',2);
+    xlabel('Iteration');
+    ylabel('Temperature');
     grid on;
   end
 end
