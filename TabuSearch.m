@@ -8,9 +8,9 @@ nStops = 20; % you can use any number, but the problem size scales as N^2
 [distMap stopsLon stopsLat] = initCities(nStops);
 
 %% --- params of TabuSearch
-times = 249; % 探索の回数
-timesNeighbor = 20; % 近傍探索の回数
-sizeTabuList = 8;
+times = 2499; % 探索の回数
+timesNeighbor = 30; % 近傍探索の回数
+sizeTabuList = times * 0.4; % sizeTabuList < nStops * ( nStops -1 ) * 1/2
 
 %% --- search
 initTour = getRandomTour(nStops);

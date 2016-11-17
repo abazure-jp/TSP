@@ -14,4 +14,4 @@ cool_coefficient = 0.935;
 %% --- search
 initTour = getRandomTour(nStops);
 doPlot = 1;
-[ bestCost bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat,temperature,cool_coefficient,nStops,initTour,doPlot)
+[ bestCost bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat,timesNeighbor,temperature,cool_coefficient,nStops,initTour,doPlot)
