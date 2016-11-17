@@ -4,13 +4,13 @@
 % path(path,pathAssets);
 
 %% --- Create cities and map
-nStops = 100; % you can use any number, but the problem size scales as N^2
+nStops = 20; % you can use any number, but the problem size scales as N^2
 [distMap stopsLon stopsLat] = initCities(nStops);
 
 %% --- params of TabuSearch
-times = 99; % 探索の回数
-timesNeighbor = 30; % 近傍探索の回数
-sizeTabuList = timesNeighbor * times * 0.3;
+times = 249; % 探索の回数
+timesNeighbor = 20; % 近傍探索の回数
+sizeTabuList = 8;
 
 %% --- search
 initTour = getRandomTour(nStops);

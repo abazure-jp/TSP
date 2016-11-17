@@ -33,6 +33,7 @@ for i = 1:iterate
   bestCosts(i+1,1) = bestCost;
 end
 
+doPlot = 1;
 %% --- 可視化
 if doPlot == 1
   % 各時点での最小値の遷移

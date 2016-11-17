@@ -10,10 +10,9 @@ function [ bestCost bestTour ] = doTabuSearch(distMap,stopsLon,stopsLat,times,ti
   %% initialize
   totalCost = getTotalDist(initTour,distMap);
   bestCosts(1,1) =  totalCost;
-
+  tabuList = [1 1];
   %% TabuSearch
   tour = initTour;
-  tabuList = initTour;
   bestTour = initTour;
 
   for n = 1:times
@@ -24,14 +23,19 @@ function [ bestCost bestTour ] = doTabuSearch(distMap,stopsLon,stopsLat,times,ti
       % 近傍探索の乱数を選考する。タブーリストに抵触するようであれば乱数選考をやり直す
       j = randi(nStops);
       k = randi(nStops);
-
       while  flag == 1
         if j == k || j == 1 || k == 1
           j = randi(nStops);
           k = randi(nStops);
         else
-          neighborTour = getNeighborhood(tour,j,k);
-          if checkTabuList(tabuList,neighborTour) == 0
+          % 実装の関係で必ずj<kとなっていて欲しいのでそうする
+          if j > k
+            temp = j;
+            j = k;
+            k = temp;
+          end
+
+          if checkTabuList(tabuList,j,k) == 0
             flag = 0;
           else
             j = k;
@@ -39,12 +43,13 @@ function [ bestCost bestTour ] = doTabuSearch(distMap,stopsLon,stopsLat,times,ti
         end
       end
 
+      neighborTour = getNeighborhood(tour,j,k);
       neighborTourCost = getTotalDist(neighborTour,distMap);
       neighborTours(i,:) = neighborTour;
       neighborTourCosts(i,:) = neighborTourCost;
 
       % tabuListが埋まったらデキューしてリストサイズを保つ
-      tabuList = [ tabuList ; neighborTour ];
+      tabuList = [ tabuList ; j k ];
       if size(tabuList,1) > sizeTabuList
         tabuList = tabuList(2:end,:);
       end

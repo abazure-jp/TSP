@@ -8,6 +8,7 @@ function [ bestCost bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat,
   bestTour = initTour;
   tour = initTour;
 
+  probability = [ ];
   temperature_hist = [temperature];
 
   %% Simulated Annealing
@@ -30,9 +31,10 @@ function [ bestCost bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat,
         bestTour = neighborTour;
       end
       % 悪い場合でも、確率で更新する。
-    elseif rand <= exp(temperature'*(neighborTourCost - tourCost))
+    elseif rand <= exp(inv(temperature)*(neighborTourCost - tourCost))
       tour = neighborTour;
     end
+    probability=[ probability; exp(inv(temperature)*(neighborTourCost - tourCost))];
     temperature = cool_coefficient * temperature;
     temperature_hist = [temperature_hist;temperature];
     tourCost = getTotalDist(tour,distMap);
@@ -77,6 +79,13 @@ function [ bestCost bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat,
     plot(temperature_hist,'LineWidth',2);
     xlabel('Iteration');
     ylabel('Temperature');
+    grid on;
+
+    % 確率の推移
+    figure('Name','Probability','NumberTitle','off')
+    plot(probability,'LineWidth',2);
+    xlabel('Iteration');
+    ylabel('probability');
     grid on;
   end
 end
