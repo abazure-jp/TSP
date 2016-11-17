@@ -13,6 +13,7 @@ nStops = 100; % you can use any number, but the problem size scales as N^2
 %% --- params of Simulated Aneealing
 temperature = 4000;
 cool_coefficient = 0.935;
+timesNeighbor = 30;
 
 %% --- search
 initTour = getRandomTour(nStops);

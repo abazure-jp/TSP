@@ -2,15 +2,17 @@ function [ bestCost, bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat
   %% initialize
   load('usborder.mat','x','y','xx','yy');
   neighborList = zeros(timesNeighbor,2);
+  neighborTours = zeros(timesNeighbor,nStops);
+  neighborTourCosts = zeros(timesNeighbor,1);
   tourCost = getTotalDist(initTour,distMap);
   bestCost = tourCost;
-  eachCosts = [tourCost];
-  bestCosts = [bestCost];
+  eachCosts = tourCost;
+  bestCosts = bestCost;
   bestTour = initTour;
   tour = initTour;
 
   probability = [ ];
-  temperature_hist = [temperature];
+  temperature_hist = temperature;
 
   %% Simulated Annealing
   while temperature > 10
@@ -36,19 +38,19 @@ function [ bestCost, bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat
     end
 
     %% 近傍探索の結果から最良なものを判定する
-    [neighborMinCost, neighborMinTour, index] = getBetterSolution(neighborTours,neighborTourCosts);
+    [neighborMinCost, neighborMinTour, ~] = getBetterSolution(neighborTours,neighborTourCosts);
     tour = neighborMinTour;
 
     %% 最良近傍がより優れていれば(小さければ)、その近傍へ遷移する
-    if neighborTourCost <= tourCost
-      tour = neighborTour;
-      if neighborTourCost <= bestCost
-        bestCost = neighborTourCost;
-        bestTour = neighborTour;
+    if neighborMinCost <= tourCost
+      tour = neighborMinTour;
+      if neighborMinCost <= bestCost
+        bestCost = neighborMinCost;
+        bestTour = neighborMinTour;
       end
       % 悪い場合でも、確率で更新する。
-    elseif rand <= exp((neighborTourCost - tourCost)/temperature)
-      tour = neighborTour;
+    elseif rand <= exp((neighborMinCost - tourCost)/temperature)
+      tour = neighborMinTour;
     end
 
     probability=[ probability; exp((neighborTourCost - tourCost)/temperature)];
