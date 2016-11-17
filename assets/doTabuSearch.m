@@ -1,14 +1,12 @@
 function [ bestCost, bestTour ] = doTabuSearch(distMap,stopsLon,stopsLat,times,timesNeighbor,sizeTabuList,nStops,initTour,doPlot)
+  %% initialize
   load('usborder.mat','x','y','xx','yy');
-  % rng(3,'twister') % makes a plot with stops in Maine & Florida, and is reproducible
-
   bestCosts = zeros(times+1,1);
   neighborList = zeros(timesNeighbor,2);
   neighborTours = zeros(timesNeighbor,nStops);
   neighborTourCosts = zeros(timesNeighbor,1);
   bestNeighborCosts = zeros(times,1);
 
-  %% initialize
   totalCost = getTotalDist(initTour,distMap);
   bestCosts(1,1) =  totalCost;
   tabuList = [ 0  0 ]; 

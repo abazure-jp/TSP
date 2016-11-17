@@ -1,41 +1,59 @@
 function [ bestCost, bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat,timesNeighbor,temperature,cool_coefficient,nStops,initTour,doPlot)
   %% initialize
   load('usborder.mat','x','y','xx','yy');
+  neighborList = zeros(timesNeighbor,2);
+  neighborTours = zeros(timesNeighbor,nStops);
+  neighborTourCosts = zeros(timesNeighbor,1);
   tourCost = getTotalDist(initTour,distMap);
   bestCost = tourCost;
-  eachCosts = [tourCost];
-  bestCosts = [bestCost];
+  eachCosts = tourCost;
+  bestCosts = bestCost;
   bestTour = initTour;
   tour = initTour;
 
   probability = [ ];
-  temperature_hist = [temperature];
+  temperature_hist = temperature;
 
   %% Simulated Annealing
   while temperature > 10
-    % まず近傍を出す
-    j = randi(nStops);
-    k = randi(nStops);
-    while j == k || j == 1 || k == 1
-      j = randi(nStops);
-      k = randi(nStops);
+  %% 2-optで交換する都市のペアを要素とした集合を作成しておく
+    for i = 1:timesNeighbor
+      [ j, k ] = get2RandomCities(nStops);
+
+      while searchDuplication(neighborList,j,k) == 1
+        [ j, k ] = get2RandomCities(nStops);
+      end
+      neighborList(i,:) = [ j k ];
     end
 
-    neighborTour = getNeighborhood(tour,j,k);
-    neighborTourCost = getTotalDist(neighborTour,distMap);
+    %% 近傍のコストを計算する
+    % 決してスマートとは言えないやり方。だれかissueだして誰か
+    for i = 1:timesNeighbor
+      j = neighborList(i,1);
+      k = neighborList(i,2);
+      neighborTour = getNeighborhood(tour,j,k);
+      neighborTourCost = getTotalDist(neighborTour,distMap);
+      neighborTours(i,:) = neighborTour;
+      neighborTourCosts(i,:) = neighborTourCost;
+    end
 
-    % 近傍がより優れていれば(小さければ)、tourを更新する
-    if neighborTourCost <= tourCost
-      tour = neighborTour;
-      if neighborTourCost <= bestCost
-        bestCost = neighborTourCost;
-        bestTour = neighborTour;
+    %% 近傍探索の結果から最良なものを判定する
+    [neighborMinCost, neighborMinTour, ~] = getBetterSolution(neighborTours,neighborTourCosts);
+    tour = neighborMinTour;
+
+    %% 最良近傍がより優れていれば(小さければ)、その近傍へ遷移する
+    if neighborMinCost <= tourCost
+      tour = neighborMinTour;
+      if neighborMinCost <= bestCost
+        bestCost = neighborMinCost;
+        bestTour = neighborMinTour;
       end
       % 悪い場合でも、確率で更新する。
-    elseif rand <= exp(inv(temperature)*(neighborTourCost - tourCost))
-      tour = neighborTour;
+    elseif rand <= exp((neighborMinCost - tourCost)/temperature)
+      tour = neighborMinTour;
     end
-    probability=[ probability; exp(inv(temperature)*(neighborTourCost - tourCost))];
+
+    probability=[ probability; exp((neighborTourCost - tourCost)/temperature)];
     temperature = cool_coefficient * temperature;
     temperature_hist = [temperature_hist;temperature];
     tourCost = getTotalDist(tour,distMap);
