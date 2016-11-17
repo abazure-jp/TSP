@@ -50,6 +50,7 @@ function [ bestCost, bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat
       end
       % 悪い場合でも、確率で更新する。
     elseif rand <= exp(-(neighborMinCost - tourCost)/temperature)
+      display('passed');
       tour = neighborMinTour;
     end
 
