@@ -18,10 +18,10 @@ function [ bestCost, bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat
   while temperature > 10
   %% 2-optで交換する都市のペアを要素とした集合を作成しておく
     for i = 1:timesNeighbor
-      [ j, k ] = get2RandomCities(nStops);
+      [ j, k ] = getNRandomCities(2,nStops);
 
       while searchDuplication(neighborList,j,k) == 1
-        [ j, k ] = get2RandomCities(nStops);
+        [ j, k ] = getNRandomCities(2,nStops);
       end
       neighborList(i,:) = [ j k ];
     end

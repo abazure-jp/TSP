@@ -9,7 +9,7 @@ function [ bestCost, bestTour ] = doTabuSearch(distMap,stopsLon,stopsLat,times,t
 
   totalCost = getTotalDist(initTour,distMap);
   bestCosts(1,1) =  totalCost;
-  tabuList = [ 0  0 ]; 
+  tabuList = [ 0  0 ];
 
   %% TabuSearch
   tour = initTour;
@@ -18,10 +18,10 @@ function [ bestCost, bestTour ] = doTabuSearch(distMap,stopsLon,stopsLat,times,t
   for n = 1:times
     %% 2-optで交換する都市のペアを要素とした集合を作成しておく
     for i = 1:timesNeighbor
-      [ j, k ] = get2RandomCities(nStops);
+      [ j, k ] = getNRandomCities(2,nStops);
 
       while searchDuplication(tabuList,j,k) == 1 && searchDuplication(neighborList,j,k) == 1
-        [ j, k ] = get2RandomCities(nStops);
+        [ j, k ] = getNRandomCities(2,nStops);
       end
       neighborList(i,:) = [ j k ];
     end
