@@ -1,10 +1,10 @@
 function tour = getNOpt(tour,N)
   nStops = size(tour,1);
-  values = getNRandomCities(N,nStops);
-  temp = sort(values);
+  cities = getNRandomCities(N,nStops); % ランダムな都市番号がN個入っている
+  temp = sort(cities); % これをソート
 
   for i = 1:N
-    tour(values(i)) = temp(i);
+    tour(cities(i)) = tour(temp(i)); % 入れ替える
   end
 
 end
