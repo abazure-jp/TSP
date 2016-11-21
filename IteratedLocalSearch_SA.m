@@ -33,7 +33,7 @@ bestCosts(1,1) = bestCost;
 % これをiterate回行なう
 
 for i = 1:iterate
-  nextInitTour = getNOpt(bestTour);
+  nextInitTour = getNOpt(bestTour,4);
   [ bestCost, bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat,timesNeighbor,temperature,cool_coefficient,nStops,initTour,doPlot);
   bestCosts(i+1,1) = bestCost;
 end
