@@ -1,6 +1,6 @@
 % 上限がnStopsでかつ1でない重複しない乱数をN個返す
 function vector = getNRandomCities(N,nStops)
-  vector = randi(nStops-1,[1,N])
+  vector = randi(nStops-1,[1,N]);
   flag = 0;
   % 重複がなくなるまで乱数を選び直す
   while flag == 0
