@@ -24,20 +24,16 @@ initTour = getRandomTour(nStops);
 
 %% --- Step2: LocalSearch(tour)
 % This code use Simulated Annealing (2-opt)
-doPlot = 0;
+doPlot = 1;
 [ bestCost, bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat,timesNeighbor,temperature,cool_coefficient,nStops,initTour,doPlot);
 bestCosts(1,1) = bestCost;
 
 %% --- Step3: LocalSearch(tour)
-% 最初の近傍探索で得たツアーとはなるべく異なる点を初期値としてLocalSearchを行なう。
-% 確率を使ってばらつきの保証をしたいところだが、面倒なのでひとまずは次の方法でばらつきの付与（笑)を試みる
-% 局所探索で得た結果に対して、次の入れ替え処理を行なう。
-% n番目に選択する都市 = 都市数 - n番目都市番号 + 2
-% 逆数っぽいしょりなのでInversedTourと名付ける。
+% Step2で得た局所解を中心に、局所解を抜け出す目的でN-Optを行った状態を初期値しとして局所解を行なう。
 % これをiterate回行なう
 
 for i = 1:iterate
-  nextInitTour = getInversedTour(bestTour);
+  nextInitTour = getNOpt(bestTour);
   [ bestCost, bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat,timesNeighbor,temperature,cool_coefficient,nStops,initTour,doPlot);
   bestCosts(i+1,1) = bestCost;
 end

@@ -1,7 +1,7 @@
 % Befor use this repository, you have to add the path at once.
-% p = path;
-% pathAssets = strcat(pwd,'/assets/');
-% path(path,pathAssets);
+p = path;
+pathAssets = strcat(pwd,'/assets/');
+path(path,pathAssets);
 clc;
 close all;
 clear;
@@ -16,7 +16,7 @@ timesNeighbor = 30; % 近傍探索の回数
 sizeTabuList = times * 0.4;
 
 %% --- params of IteratedLocalSearch
-iterate = 19;
+iterate = 4;
 bestCosts = zeros(iterate+1,1);
 
 %% --- Step1: output initial tour;
@@ -24,20 +24,16 @@ initTour = getRandomTour(nStops);
 
 %% --- Step2: LocalSearch(tour)
 % This code use Tabu Search (2-opt) as local search.
-doPlot = 0;
+doPlot = 1;
 [bestCost, bestTour] = doTabuSearch(distMap,stopsLon,stopsLat,times,timesNeighbor,sizeTabuList,nStops,initTour,doPlot);
 bestCosts(1,1) = bestCost;
 
 %% --- Step3: LocalSearch(tour)
-% 最初の近傍探索で得たツアーとはなるべく異なる点を初期値としてLocalSearchを行なう。
-% 確率を使ってばらつきの保証をしたいところだが、面倒なのでひとまずは次の方法でばらつきの付与（笑)を試みる
-% 局所探索で得た結果に対して、次の入れ替え処理を行なう。
-% n番目に選択する都市 = 都市数 - n番目都市番号 + 2
-% 逆数っぽいしょりなのでInversedTourと名付ける。
+% Step2で得た局所解を中心に、局所解を抜け出す目的でN-Optを行った状態を初期値しとして局所解を行なう。
 % これをiterate回行なう
 
 for i = 1:iterate
-  nextInitTour = getInversedTour(bestTour);
+  nextInitTour = getNOpt(bestTour);
   [bestCost, bestTour] = doTabuSearch(distMap,stopsLon,stopsLat,times,timesNeighbor,sizeTabuList,nStops,initTour,doPlot);
   bestCosts(i+1,1) = bestCost;
 end
