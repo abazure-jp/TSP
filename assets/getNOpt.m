@@ -4,7 +4,7 @@ function tour = getNOpt(tour,N)
   temp = sort(cities); % これをソート
 
   for i = 1:N
-    tour(cities(i)) = tour(temp(i)); % 入れ替える
+    tour(temp(i)) = cities(i);
   end
 
 end
