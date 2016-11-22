@@ -3,7 +3,8 @@ function totalDist = getTotalDist(tour,distMap)
 
   for i = 1:size(tour,2)
     from = tour(i);
-    % ツアーの最後の行き先は開始地点だが、tourベクトルの最後の行き先は開始地点の一つ前の都市となっている。このままではtour(i+1)で参照エラーとなるため、最後のループのときだけ例外処理をする
+    % ツアーの最後の行き先は開始地点だが、tourベクトルの最後の行き先は開始地点の一つ前の都市となっている。
+    % このままではtour(i+1)で参照エラーとなるため、最後のループのときだけ例外処理をする
     if i == size(tour,2)
       to = 1;
     else
@@ -20,7 +21,6 @@ function totalDist = getTotalDist(tour,distMap)
 
     from = num2str(from);
     to = num2str(to);
-
     totalDist = totalDist + distMap(strcat(from,'&',to));
   end
 end

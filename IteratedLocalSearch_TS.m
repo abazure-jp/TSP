@@ -33,15 +33,15 @@ bestCosts(1,1) = bestCost;
 % これをiterate回行なう
 
 for i = 1:iterate
-  nextInitTour = getNOpt(bestTour);
-  [bestCost, bestTour] = doTabuSearch(distMap,stopsLon,stopsLat,times,timesNeighbor,sizeTabuList,nStops,initTour,doPlot);
+  nextInitTour = getNOpt(bestTour,4);
+  [bestCost, bestTour] = doTabuSearch(distMap,stopsLon,stopsLat,times,timesNeighbor,sizeTabuList,nStops,nextInitTour,doPlot);
   bestCosts(i+1,1) = bestCost;
 end
 
 %% --- 可視化
 if doPlot == 1
   % 各時点での最小値の遷移
-  figure('Name','Best value of each iteration','NumberTitle','off')
+  figure('Name','Best value of each local search','NumberTitle','off')
   plot(bestCosts,'LineWidth',2);
   xlabel('iteration');
   ylabel('Best Cost');
