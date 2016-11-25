@@ -10,6 +10,7 @@ function [ bestCost, bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat
   bestCosts = bestCost;
   bestTour = initTour;
   tour = initTour;
+  climedCount = 0;
 
   probability = [ ];
   temperature_hist = temperature;
@@ -18,10 +19,15 @@ function [ bestCost, bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat
   while temperature > 10
   %% 2-optで交換する都市のペアを要素とした集合を作成しておく
     for i = 1:timesNeighbor
-      [ j, k ] = get2RandomCities(nStops);
+      temp = sort(getNRandomCities(2,nStops));
+      j = temp(1);
+      k = temp(2);
 
       while searchDuplication(neighborList,j,k) == 1
-        [ j, k ] = get2RandomCities(nStops);
+        temp = getNRandomCities(2,nStops);
+        temp = sort(getNRandomCities(2,nStops));
+        j = temp(1);
+        k = temp(2);
       end
       neighborList(i,:) = [ j k ];
     end
@@ -50,7 +56,8 @@ function [ bestCost, bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat
       end
       % 悪い場合でも、確率で更新する。
     elseif rand <= exp(-(neighborMinCost - tourCost)/temperature)
-      display('passed');
+      display('climbed');
+      climedCount = climedCount + 1;
       tour = neighborMinTour;
     end
 

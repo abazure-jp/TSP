@@ -1,7 +1,7 @@
 % Befor use this repository, you have to add the path at once.
-% p = path;
-% pathAssets = strcat(pwd,'/assets/');
-% path(path,pathAssets);
+ p = path;
+ pathAssets = strcat(pwd,'/assets/');
+ path(path,pathAssets);
 clc;
 close all;
 clear;
