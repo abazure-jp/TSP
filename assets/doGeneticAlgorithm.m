@@ -5,7 +5,22 @@ function [ bestTour bestCost ] = doGeneticAlgorithm(map,agents,kill,select,cross
   cost = map.nStops + 1;
   tour = 1:map.nStops;
 
+  %% --- visualize
+  load('usborder.mat','x','y','xx','yy');
+  agents = sortrows(agents,map.nStops + 1);
+  % bestInitAgent
+  figure('Name','Best Initilized Tour of Agents','NumberTitle','off')
+  plot(x,y,'Color','red'); % draw the outside border
+  hold on
+  plot(map.lon,map.lat,'*b')
+  drawTourPath(map.lon,map.lat,agents(1,tour));
+  hold off
+
+  %% --- Evolving
   for i = 1:generations
+    if mod(i,1000) == 0  && i >= 1000
+      display(i);
+    end
     agents = sortrows(agents,map.nStops + 1);
     agents(border:end,:) = 0;
 

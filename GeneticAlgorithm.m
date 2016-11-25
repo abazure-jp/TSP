@@ -1,16 +1,21 @@
 % Befor use this repository, you have to add the path at once.
- p = path;
- pathAssets = strcat(pwd,'/assets/');
- path(path,pathAssets);
+p = path;
+pathAssets = strcat(pwd,'/assets/');
+path(path,pathAssets);
+
+clc;
+close all;
+clear;
 
 %% --- Create cities and map
 load('usborder.mat','x','y','xx','yy');
-map.nStops = 20; % you can use any number, but the problem size scales as N^2
+map.nStops = 40; % you can use any number, but the problem size scales as N^2
 [map.distMap, map.lon, map.lat] = initCities(map.nStops);
 
 %% --- params of Genetic Algorithm
 numOfAgents = 10;
 agents = zeros(numOfAgents,map.nStops+1);
+genotype = 'Permutation';
 
 % how to kill agents
 kill.type ='Truncation';% Only had implemented 'Truncation'
@@ -26,7 +31,7 @@ crossover.rate = 0.98;
 crossover.parents = 2;
 
 % mutationRate = 1 - crossoverRate;
-generations = 20;
+generations = 2000;
 
 
 %% --- search
