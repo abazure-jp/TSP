@@ -11,12 +11,12 @@ nStops = 100; % you can use any number, but the problem size scales as N^2
 [distMap, stopsLon, stopsLat] = initCities(nStops);
 
 %% --- params of TabuSearch
-times = 499; % 探索の回数
+times = 299; % 探索の回数
 timesNeighbor = 30; % 近傍探索の回数
 sizeTabuList = times * 0.4;
 
 %% --- params of IteratedLocalSearch
-iterate = 4;
+iterate = 19;
 bestCosts = zeros(iterate+1,1);
 
 %% --- Step1: output initial tour;

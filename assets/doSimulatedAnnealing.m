@@ -10,6 +10,7 @@ function [ bestCost, bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat
   bestCosts = bestCost;
   bestTour = initTour;
   tour = initTour;
+  climedCount = 0;
 
   probability = [ ];
   temperature_hist = temperature;
@@ -23,7 +24,6 @@ function [ bestCost, bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat
       k = temp(2);
 
       while searchDuplication(neighborList,j,k) == 1
-        display('Forbidden');
         temp = getNRandomCities(2,nStops);
         temp = sort(getNRandomCities(2,nStops));
         j = temp(1);
@@ -56,7 +56,8 @@ function [ bestCost, bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat
       end
       % 悪い場合でも、確率で更新する。
     elseif rand <= exp(-(neighborMinCost - tourCost)/temperature)
-      display('passed');
+      display('climbed');
+      climedCount = climedCount + 1;
       tour = neighborMinTour;
     end
 
