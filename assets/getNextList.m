@@ -1,3 +1,4 @@
+% passedCitiesはNx1のバイナリベクトル。
 function nextList = getNextList(passedCities)
   nextList =[];
   for city = 1:size(passedCities,2)
