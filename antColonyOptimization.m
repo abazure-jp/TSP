@@ -17,8 +17,8 @@ map.nStops = 100; % you can use any number, but the problem size scales as N^2
 %% --- params of Ants
 numOfAgents = 10; % agent is 🐜
 agents = zeros(numOfAgents,map.nStops+1);
-gobackTimes = 1000;
-evaporationRate = 0.05;
+gobackTimes = 300;
+evaporationRate = 0.90;
 acidQuantity = 100;
 acidPow = 1;
 heurisPow = 4;
@@ -32,7 +32,7 @@ for i = 1:numOfAgents
   agents(i,cost) = getTotalDist(agents(i,tour),map.distMap);
 end
 
-doPlot = 0;
+doPlot = 1;
 [bestTour bestCost] = doAntColonyOptimization(map,agents,gobackTimes,evaporationRate,acidQuantity,acidPow,heurisPow);
 %% --- visualize
 if doPlot == 1
