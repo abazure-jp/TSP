@@ -19,6 +19,7 @@ function [bestTour bestCost] = doAntColonyOptimization(map,agents,gobackTimes,ev
   drawTourPath(map.lon,map.lat,agents(1,tour));
   hold off
 
+  bestCosts = agents(1,cost);
   %% --- go and back
   for i = 1:gobackTimes
     for j = 1:population
@@ -27,19 +28,17 @@ function [bestTour bestCost] = doAntColonyOptimization(map,agents,gobackTimes,ev
     end
     acidMap = getUpdatedAcidMap(triu(NaN(map.nStops,map.nStops))',agents,evaporationRate,acidQuantity);
     probMap = getUpdatedProbMap(acidMap,heuristicsMap,acidPow,heurisPow);
-    if mod(i,100) == 0  && i >= 100
-      % visualize
-      load('usborder.mat','x','y','xx','yy');
-      agents = sortrows(agents,cost);
-      % bestInitAgent
-      figure('Name','Best Initilized Tour of Agents','NumberTitle','off')
-      plot(x,y,'Color','red'); % draw the outside border
-      hold on
-      plot(map.lon,map.lat,'*b')
-      drawTourPath(map.lon,map.lat,agents(1,tour));
-      hold off
-    end
+    agents = sortrows(agents,cost);
+    bestCosts = [ bestCosts ; agents(1,cost) ];
   end
+
+  bestCosts = bestCosts(2:end);
+    % 各時点での最小値の遷移
+    figure('Name','Best value of 100x iteration','NumberTitle','off')
+    plot(bestCosts,'LineWidth',2);
+    xlabel('iteration');
+    ylabel('Best Cost');
+    grid on;
 
   agents = sortrows(agents,cost);
   bestTour = agents(1,tour);
