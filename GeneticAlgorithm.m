@@ -31,7 +31,7 @@ crossover.rate = 0.88;
 crossover.parents = 2;
 
 % mutationRate = 1 - crossoverRate;
-generations = 2000;
+generations = 20;
 
 
 %% --- search
@@ -44,7 +44,7 @@ for i = 1:numOfAgents
 end
 
 doPlot = 1;
-[bestTour bestCost agents] = doGeneticAlgorithm(map,agents,kill,select,crossover,generations);
+[bestTour bestCost agents] = doGeneticAlgorithm(map,agents,kill,select,crossover,generations,1);
 
 
 %% --- visualize
