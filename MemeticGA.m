@@ -42,7 +42,7 @@ for i = 1:numOfAgents
 end
 
 %% --- params of TabuSearch
-times = 30; % 探索の回数
+times = 5; % 探索の回数
 timesNeighbor = 10; % 近傍探索の回数
 sizeTabuList = times * 0.4; % sizeTabuList < nStops * ( nStops -1 ) * 1/2
 doPlot = 0;
@@ -55,8 +55,15 @@ for j = 1:generations
     gain = agents(k,cost) - bestCost;
     if gain > 0 % 改善された
       % 維持
+      timesNeighbor = timesNeighbor + 1;
+      if timesNeighbor > 15
+        timesNeighbor = 15;
+      end
     else % 改悪
-      timesNeighbor = round(1.4 * timesNeighbor);
+      timesNeighbor = timesNeighbor - 1;
+      if timesNeighbor < 5
+        timesNeighbor = 5;
+      end
     end
     agents(k,cost) = bestCost;
     agents(k,tour) = bestTour;
