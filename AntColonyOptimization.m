@@ -17,7 +17,7 @@ map.nStops = 100; % you can use any number, but the problem size scales as N^2
 %% --- params of Ants
 numOfAgents = 10; % agent is 🐜
 agents = zeros(numOfAgents,map.nStops+1);
-gobackTimes = 300;
+gobackTimes = 200;
 evaporationRate = 0.90;
 acidQuantity = 100;
 acidPow = 1;

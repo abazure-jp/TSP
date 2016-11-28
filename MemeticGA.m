@@ -26,15 +26,13 @@ select.type = 'Roulette'; % Only had implemented 'Roulette'
 
 % how method of crossover
 crossover.type = 'One-point'; % Only had implemented 'One-point'
-crossover.border = map.nStops * 0.3;
+crossover.border = map.nStops * 0.5;
 crossover.rate = 0.88;
 crossover.parents = 2;
 
 % mutationRate = 1 - crossoverRate;
-generations = 2000;
+generations = 200;
 
-
-%% --- search
 tour = 1:map.nStops;
 cost = map.nStops + 1;
 
@@ -43,18 +41,25 @@ for i = 1:numOfAgents
   agents(i,cost) = getTotalDist(agents(i,tour),map.distMap);
 end
 
-doPlot = 1;
-[bestTour bestCost agents] = doGeneticAlgorithm(map,agents,kill,select,crossover,generations);
+%% --- params of TabuSearch
+times = 30; % 探索の回数
+timesNeighbor = 10; % 近傍探索の回数
+sizeTabuList = times * 0.4; % sizeTabuList < nStops * ( nStops -1 ) * 1/2
+doPlot = 0;
 
-
-%% --- visualize
-if doPlot == 1
-  % bestTour
-  figure('Name','Best Tour','NumberTitle','off')
-  plot(x,y,'Color','red'); % draw the outside border
-  hold on
-  plot(map.lon,map.lat,'*b')
-  drawTourPath(map.lon,map.lat,bestTour);
-  hold off
+%% a-TLHA memetic
+% 近傍探索で得た結果をGAさせる。その際局所探索の増加率を調査して次世代の近傍探索のパラメータを更新する
+for j = 1:generations
+  for k = 1:numOfAgents
+    [bestCost, bestTour] = doTabuSearch(map.distMap,map.lon,map.lat,times,timesNeighbor,sizeTabuList,map.nStops,agents(k,tour),doPlot);
+    gain = agents(k,cost) - bestCost;
+    if gain > 0 % 改善された
+      % 維持
+    else % 改悪
+      timesNeighbor = round(1.4 * timesNeighbor);
+    end
+    agents(k,cost) = bestCost;
+    agents(k,tour) = bestTour;
+  end
+  [ ~, ~, agents ] = doGeneticAlgorithm(map,agents,kill,select,crossover,0);
 end
-bestCost
