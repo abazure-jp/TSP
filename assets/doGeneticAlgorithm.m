@@ -1,4 +1,4 @@
-function [ bestTour bestCost ] = doGeneticAlgorithm(map,agents,kill,select,crossover,generations);
+function [ bestTour bestCost agents] = doGeneticAlgorithm(map,agents,kill,select,crossover,generations);
   population = size(agents,1);
   border = population - (population * kill.rate); % 上から何番目
 
