@@ -1,13 +1,13 @@
-function [ bestCost, bestTour ] = doTabuSearch(distMap,stopsLon,stopsLat,times,timesNeighbor,sizeTabuList,nStops,initTour,doPlot)
+function [ bestCost, bestTour ] = doTabuSearch(map,conf,initTour,doPlot);
   %% initialize
   load('usborder.mat','x','y','xx','yy');
-  bestCosts = zeros(times+1,1);
-  neighborList = zeros(timesNeighbor,2);
-  neighborTours = zeros(timesNeighbor,nStops);
-  neighborTourCosts = zeros(timesNeighbor,1);
-  bestNeighborCosts = zeros(times,1);
+  bestCosts = zeros(conf.times+1,1);
+  neighborList = zeros(conf.timesNeighbor,2);
+  neighborTours = zeros(conf.timesNeighbor,map.nStops);
+  neighborTourCosts = zeros(conf.timesNeighbor,1);
+  bestNeighborCosts = zeros(conf.times,1);
 
-  totalCost = getTotalDist(initTour,distMap);
+  totalCost = getTotalDist(initTour,map.distMap);
   bestCosts(1,1) =  totalCost;
   tabuList = [ 0  0 ];
 
@@ -15,16 +15,16 @@ function [ bestCost, bestTour ] = doTabuSearch(distMap,stopsLon,stopsLat,times,t
   tour = initTour;
   bestTour = initTour;
 
-  for n = 1:times
+  for n = 1:conf.times
     %% 2-optで交換する都市のペアを要素とした集合を作成しておく
-    for i = 1:timesNeighbor
-      temp = sort(getNRandomCities(2,nStops));
+    for i = 1:conf.timesNeighbor
+      temp = sort(getNRandomCities(2,map.nStops));
       j = temp(1);
       k = temp(2);
 
       while searchDuplication(tabuList,j,k) == 1 && searchDuplication(neighborList,j,k) == 1
         display('Forbidden');
-        temp = sort(getNRandomCities(2,nStops));
+        temp = sort(getNRandomCities(2,map.nStops));
         j = temp(1);
         k = temp(2);
       end
@@ -33,11 +33,11 @@ function [ bestCost, bestTour ] = doTabuSearch(distMap,stopsLon,stopsLat,times,t
 
     %% 近傍のコストを計算する
     % 決してスマートとは言えないやり方。だれかissueだして誰か
-    for i = 1:timesNeighbor
+    for i = 1:conf.timesNeighbor
       j = neighborList(i,1);
       k = neighborList(i,2);
       neighborTour = getNeighborhood(tour,j,k);
-      neighborTourCost = getTotalDist(neighborTour,distMap);
+      neighborTourCost = getTotalDist(neighborTour,map.distMap);
       neighborTours(i,:) = neighborTour;
       neighborTourCosts(i,:) = neighborTourCost;
     end
@@ -50,22 +50,22 @@ function [ bestCost, bestTour ] = doTabuSearch(distMap,stopsLon,stopsLat,times,t
     j = neighborList(index,1);
     k = neighborList(index,2);
     tabuList = [tabuList ; j k];
-    if size(tabuList,1) > sizeTabuList
+    if size(tabuList,1) > conf.sizeTabuList
       tabuList = tabuList(2:end,:);
     end
 
     % 初期化
-    neighborTours = zeros(timesNeighbor,nStops);
-    neighborTourCosts = zeros(timesNeighbor,1);
+    neighborTours = zeros(conf.timesNeighbor,map.nStops);
+    neighborTourCosts = zeros(conf.timesNeighbor,1);
 
     %% plot用の記録
     bestNeighborCosts(n,1) =  neighborMinCost;
     % 過去のベストな値との比較をして、優れば更新
-    if getTotalDist(tour,distMap) < getTotalDist(bestTour,distMap)
+    if getTotalDist(tour,map.distMap) < getTotalDist(bestTour,map.distMap)
       bestTour = tour;
     end
 
-    bestCosts(n+1,1) = getTotalDist(bestTour,distMap);
+    bestCosts(n+1,1) = getTotalDist(bestTour,map.distMap);
   end
 
   bestCost = bestCosts(end,1);
@@ -76,16 +76,16 @@ function [ bestCost, bestTour ] = doTabuSearch(distMap,stopsLon,stopsLat,times,t
     figure('Name','Initial Tour','NumberTitle','off')
     plot(x,y,'Color','red'); % draw the outside border
     hold on
-    plot(stopsLon,stopsLat,'*b')
-    drawTourPath(stopsLon,stopsLat,initTour);
+    plot(map.lon,map.lat,'*b')
+    drawTourPath(map.lon,map.lat,initTour);
     hold off
 
     % bestTour
     figure('Name','Best Tour','NumberTitle','off')
     plot(x,y,'Color','red'); % draw the outside border
     hold on
-    plot(stopsLon,stopsLat,'*b')
-    drawTourPath(stopsLon,stopsLat,bestTour);
+    plot(map.lon,map.lat,'*b')
+    drawTourPath(map.lon,map.lat,bestTour);
     hold off
 
     % 各時点での最小値の遷移
