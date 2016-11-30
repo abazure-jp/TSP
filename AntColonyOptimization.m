@@ -18,26 +18,24 @@ load('usborder.mat','x','y','xx','yy');
 map.nStops = 100; % you can use any number, but the problem size scales as N^2
 [map.distMap, map.lon, map.lat] = initCities(map.nStops);
 
-%% --- params of Ants
-numOfAgents = 10; % agent is 🐜
-agents = zeros(numOfAgents,map.nStops+1);
-gobackTimes = 200;
-evaporationRate = 0.90;
-acidQuantity = 100;
-acidPow = 1;
-heurisPow = 4;
+%% --- Load config
+conf = getConfig('AntColonyOptimization', map.nStops);
+agents = zeros(conf.population,map.nStops+1);
+if conf.randset == 1
+   rng(3,'twister') % makes a plot with stops in Maine & Florida, and is reproducible
+end
 
 %% --- search
 tour = 1:map.nStops;
 cost = map.nStops + 1;
 
-for i = 1:numOfAgents
+for i = 1:conf.population
   agents(i,tour) = getRandomTour(map.nStops);
   agents(i,cost) = getTotalDist(agents(i,tour),map.distMap);
 end
 
 doPlot = 1;
-[bestTour bestCost] = doAntColonyOptimization(map,agents,gobackTimes,evaporationRate,acidQuantity,acidPow,heurisPow);
+[bestTour bestCost] = doAntColonyOptimization(map,agents,conf);
 
 %% --- measure end
 allvars = whos;

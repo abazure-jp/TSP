@@ -1,12 +1,13 @@
-function [bestTour bestCost] = doAntColonyOptimization(map,agents,gobackTimes,evaporationRate,acidQuantity,acidPow,heurisPow);
+function [bestTour bestCost] = doAntColonyOptimization(map,agents,conf);
   %% initialize
   population = size(agents,1);
-  acidMap       = getUpdatedAcidMap(triu(NaN(map.nStops,map.nStops))',agents,evaporationRate,acidQuantity);
+  acidMap       = getUpdatedAcidMap(triu(NaN(map.nStops,map.nStops))',agents,conf.evaporationRate,conf.acidQuantity);
   heuristicsMap = getHeuristicsMap(triu(NaN(map.nStops,map.nStops))',map.distMap); % 経路の逆数
   probMap = triu(NaN(map.nStops,map.nStops))';
-  probMap = getUpdatedProbMap(acidMap,heuristicsMap,acidPow,heurisPow);
+  probMap = getUpdatedProbMap(acidMap,heuristicsMap,conf.acidPow,conf.heurisPow);
   cost = map.nStops + 1; % for index of agent
   tour = 1:map.nStops; % for index of agent
+  bestCosts = zeros(conf.gobackTimes+1,1);
 
   % visualize
   load('usborder.mat','x','y','xx','yy');
@@ -19,26 +20,28 @@ function [bestTour bestCost] = doAntColonyOptimization(map,agents,gobackTimes,ev
   drawTourPath(map.lon,map.lat,agents(1,tour));
   hold off
 
-  bestCosts = agents(1,cost);
+  bestCosts(1,1) = agents(1,cost);
   %% --- go and back
-  for i = 1:gobackTimes
+  for i = 1:conf.gobackTimes
+    if mod(i,10) == 0
+      i
+    end
     for j = 1:population
       agents(j,tour) = getTourByProbability(map.nStops,probMap);
       agents(j,cost) = getTotalDist(agents(j,tour),map.distMap);
     end
-    acidMap = getUpdatedAcidMap(triu(NaN(map.nStops,map.nStops))',agents,evaporationRate,acidQuantity);
-    probMap = getUpdatedProbMap(acidMap,heuristicsMap,acidPow,heurisPow);
+    acidMap = getUpdatedAcidMap(triu(NaN(map.nStops,map.nStops))',agents,conf.evaporationRate,conf.acidQuantity);
+    probMap = getUpdatedProbMap(acidMap,heuristicsMap,conf.acidPow,conf.heurisPow);
     agents = sortrows(agents,cost);
-    bestCosts = [ bestCosts ; agents(1,cost) ];
+    bestCosts(i+1,1) = agents(1,cost);
   end
 
-  bestCosts = bestCosts(2:end);
-    % 各時点での最小値の遷移
-    figure('Name','Best value of 100x iteration','NumberTitle','off')
-    plot(bestCosts,'LineWidth',2);
-    xlabel('iteration');
-    ylabel('Best Cost');
-    grid on;
+  % 各時点での最小値の遷移
+  figure('Name','Best value of 100x iteration','NumberTitle','off')
+  plot(bestCosts,'LineWidth',2);
+  xlabel('iteration');
+  ylabel('Best Cost');
+  grid on;
 
   agents = sortrows(agents,cost);
   bestTour = agents(1,tour);

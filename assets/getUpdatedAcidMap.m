@@ -3,7 +3,6 @@ function acidMap = getUpdatedAcidMap(acidMap,agents,evaporationRate,acidQuantity
   % evaporation
   acidMap = ( 1 - evaporationRate) * acidMap;
   for i = 1:size(agents,1)
-    cost = agents(i,end);
     for j = 1:tourSize
       from = agents(i,j); 
       if j == tourSize
