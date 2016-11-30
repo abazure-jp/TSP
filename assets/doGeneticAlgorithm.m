@@ -30,7 +30,7 @@ function [ bestTour bestCost agents] = doGeneticAlgorithm(map,agents,kill,select
       end
     end
     agents = sortrows(agents,map.nStops + 1);
-    eachBetterCosts(generations,1) = agents(1,cost);
+    eachBetterCosts(i,1) = agents(1,cost);
   end
   bestTour = agents(1,tour);
   bestCost = agents(1,cost);
