@@ -18,7 +18,7 @@ map.nStops = 100; % you can use any number, but the problem size scales as N^2
 [map.distMap, map.lon, map.lat] = initCities(map.nStops);
 
 %% --- params of Genetic Algorithm
-numOfAgents = 10;
+numOfAgents = map.nStops*10;
 agents = zeros(numOfAgents,map.nStops+1);
 genotype = 'Permutation';
 
@@ -36,7 +36,7 @@ crossover.rate = 0.88;
 crossover.parents = 2;
 
 % mutationRate = 1 - crossoverRate;
-generations = 1000;
+generations = 100;
 
 %% --- search
 tour = 1:map.nStops;

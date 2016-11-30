@@ -19,7 +19,7 @@ map.nStops = 100; % you can use any number, but the problem size scales as N^2
 [map.distMap, map.lon, map.lat] = initCities(map.nStops);
 
 %% --- params of Ants
-numOfAgents = 10; % agent is 🐜
+numOfAgents = map.nStops * 10; % agent is 🐜
 agents = zeros(numOfAgents,map.nStops+1);
 gobackTimes = 200;
 evaporationRate = 0.90;
