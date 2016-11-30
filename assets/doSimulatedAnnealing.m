@@ -24,7 +24,6 @@ function [ bestCost, bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat
       k = temp(2);
 
       while searchDuplication(neighborList,j,k) == 1
-        temp = getNRandomCities(2,nStops);
         temp = sort(getNRandomCities(2,nStops));
         j = temp(1);
         k = temp(2);

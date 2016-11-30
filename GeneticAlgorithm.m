@@ -48,7 +48,7 @@ for i = 1:numOfAgents
 end
 
 doPlot = 1;
-[bestTour bestCost agents] = doGeneticAlgorithm(map,agents,kill,select,crossover,generations,1);
+[bestTour, bestCost, agents] = doGeneticAlgorithm(map,agents,kill,select,crossover,generations,1);
 
 
 %% --- end measure

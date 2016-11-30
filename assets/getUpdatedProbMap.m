@@ -1,5 +1,6 @@
 function probMap = getUpdatedProbMap(acidMap,heuristicsMap,acidPow,heurisPow)
   tourSize = size(acidMap,1);
+  probMap = zeros(tourSize,tourSize);
   % evaporation
   for i = 1:tourSize
     for j = i + 1:tourSize

@@ -24,7 +24,6 @@ function [ bestCost, bestTour ] = doTabuSearch(distMap,stopsLon,stopsLat,times,t
 
       while searchDuplication(tabuList,j,k) == 1 && searchDuplication(neighborList,j,k) == 1
         display('Forbidden');
-        temp = getNRandomCities(2,nStops);
         temp = sort(getNRandomCities(2,nStops));
         j = temp(1);
         k = temp(2);

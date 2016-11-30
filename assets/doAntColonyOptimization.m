@@ -1,4 +1,4 @@
-function [bestTour bestCost] = doAntColonyOptimization(map,agents,gobackTimes,evaporationRate,acidQuantity,acidPow,heurisPow);
+function [bestTour, bestCost] = doAntColonyOptimization(map,agents,gobackTimes,evaporationRate,acidQuantity,acidPow,heurisPow)
   %% initialize
   population = size(agents,1);
   acidMap       = getUpdatedAcidMap(triu(NaN(map.nStops,map.nStops))',agents,evaporationRate,acidQuantity);
@@ -7,6 +7,7 @@ function [bestTour bestCost] = doAntColonyOptimization(map,agents,gobackTimes,ev
   probMap = getUpdatedProbMap(acidMap,heuristicsMap,acidPow,heurisPow);
   cost = map.nStops + 1; % for index of agent
   tour = 1:map.nStops; % for index of agent
+  bestCosts = zeros(gobackTimes+1,1);
 
   % visualize
   load('usborder.mat','x','y','xx','yy');
@@ -18,8 +19,8 @@ function [bestTour bestCost] = doAntColonyOptimization(map,agents,gobackTimes,ev
   plot(map.lon,map.lat,'*b')
   drawTourPath(map.lon,map.lat,agents(1,tour));
   hold off
+  bestCosts(1,1) = agents(1,1);
 
-  bestCosts = agents(1,cost);
   %% --- go and back
   for i = 1:gobackTimes
     for j = 1:population
@@ -29,7 +30,7 @@ function [bestTour bestCost] = doAntColonyOptimization(map,agents,gobackTimes,ev
     acidMap = getUpdatedAcidMap(triu(NaN(map.nStops,map.nStops))',agents,evaporationRate,acidQuantity);
     probMap = getUpdatedProbMap(acidMap,heuristicsMap,acidPow,heurisPow);
     agents = sortrows(agents,cost);
-    bestCosts = [ bestCosts ; agents(1,cost) ];
+    bestCosts(i+1,1) = agents(1,cost);
   end
 
   bestCosts = bestCosts(2:end);

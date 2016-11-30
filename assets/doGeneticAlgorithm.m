@@ -1,6 +1,5 @@
-function [ bestTour bestCost agents] = doGeneticAlgorithm(map,agents,kill,select,crossover,generations,doPlot);
+function [ bestTour, bestCost, agents] = doGeneticAlgorithm(map,agents,kill,select,crossover,generations,doPlot)
   eachBetterCosts = zeros(generations,1);
-  nextAgents=agents;
   population = size(agents+1,1);
   border = population - (population * kill.rate); % 上から何番目
   agents = sortrows(agents,map.nStops + 1);
@@ -12,10 +11,10 @@ function [ bestTour bestCost agents] = doGeneticAlgorithm(map,agents,kill,select
   for i = 1:generations
     if mod(i,1000) == 0  && i >= 1000
       display(i);
-    end
+    end  
     nextAgents = agents;
     nextAgents(border:end,:) = 0;
-
+    
     % border以下のagentは子孫を残すか突然変異
     for j = border:population
       if rand < crossover.rate
