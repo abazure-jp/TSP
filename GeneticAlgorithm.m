@@ -7,6 +7,11 @@ clc;
 close all;
 clear;
 
+%% --- start measure
+start_time = cputime;
+allvars = whos;
+memused1 = sum([allvars.bytes]);
+
 %% --- Create cities and map
 load('usborder.mat','x','y','xx','yy');
 map.nStops = 100; % you can use any number, but the problem size scales as N^2
@@ -31,8 +36,7 @@ crossover.rate = 0.88;
 crossover.parents = 2;
 
 % mutationRate = 1 - crossoverRate;
-generations = 20;
-
+generations = 1000;
 
 %% --- search
 tour = 1:map.nStops;
@@ -46,6 +50,15 @@ end
 doPlot = 1;
 [bestTour bestCost agents] = doGeneticAlgorithm(map,agents,kill,select,crossover,generations,1);
 
+
+%% --- end measure
+allvars = whos;
+memused2 = sum([allvars.bytes]);
+memcost = memused2 - memused1;
+end_time = cputime;
+exec_time = end_time - start_time;
+fprintf('\ntime taken = %f\t', exec_time);
+fprintf('\nmemeory cost = %f\t', memcost);
 
 %% --- visualize
 if doPlot == 1

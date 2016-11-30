@@ -8,11 +8,15 @@ clc;
 close all;
 clear;
 
+%% --- measure
+start_time = cputime;
+allvars = whos;
+memused1 = sum([allvars.bytes]);
+
 %% --- Create cities and map
 load('usborder.mat','x','y','xx','yy');
 map.nStops = 100; % you can use any number, but the problem size scales as N^2
 [map.distMap, map.lon, map.lat] = initCities(map.nStops);
-
 
 %% --- params of Ants
 numOfAgents = 10; % agent is 🐜
@@ -34,6 +38,16 @@ end
 
 doPlot = 1;
 [bestTour bestCost] = doAntColonyOptimization(map,agents,gobackTimes,evaporationRate,acidQuantity,acidPow,heurisPow);
+
+%% --- measure end
+allvars = whos;
+memused2 = sum([allvars.bytes]);
+memcost = memused2 - memused1;
+end_time = cputime;
+exec_time = end_time - start_time;
+fprintf('\ntime taken = %f\t', exec_time);
+fprintf('\nmemeory cost = %f\t', memcost);
+
 %% --- visualize
 if doPlot == 1
   % bestTour
