@@ -1,10 +1,10 @@
-function [ bestCost, bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat,timesNeighbor,temperature,cool_coefficient,nStops,initTour,doPlot)
+function [ bestCost, bestTour ] = doSimulatedAnnealing(map,conf,initTour,doPlot);
   %% initialize
   load('usborder.mat','x','y','xx','yy');
-  neighborList = zeros(timesNeighbor,2);
-  neighborTours = zeros(timesNeighbor,nStops);
-  neighborTourCosts = zeros(timesNeighbor,1);
-  tourCost = getTotalDist(initTour,distMap);
+  neighborList = zeros(conf.timesNeighbor,2);
+  neighborTours = zeros(conf.timesNeighbor,map.nStops);
+  neighborTourCosts = zeros(conf.timesNeighbor,1);
+  tourCost = getTotalDist(initTour,map.distMap);
   bestCost = tourCost;
   eachCosts = tourCost;
   bestCosts = bestCost;
@@ -13,19 +13,18 @@ function [ bestCost, bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat
   climedCount = 0;
 
   probability = [ ];
-  temperature_hist = temperature;
+  temperature_hist = conf.temperature;
 
   %% Simulated Annealing
-  while temperature > 10
+  while conf.temperature > 10
   %% 2-optで交換する都市のペアを要素とした集合を作成しておく
-    for i = 1:timesNeighbor
-      temp = sort(getNRandomCities(2,nStops));
+    for i = 1:conf.timesNeighbor
+      temp = sort(getNRandomCities(2,map.nStops));
       j = temp(1);
       k = temp(2);
 
       while searchDuplication(neighborList,j,k) == 1
-        temp = getNRandomCities(2,nStops);
-        temp = sort(getNRandomCities(2,nStops));
+        temp = sort(getNRandomCities(2,map.nStops));
         j = temp(1);
         k = temp(2);
       end
@@ -34,11 +33,11 @@ function [ bestCost, bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat
 
     %% 近傍のコストを計算する
     % 決してスマートとは言えないやり方。だれかissueだして誰か
-    for i = 1:timesNeighbor
+    for i = 1:conf.timesNeighbor
       j = neighborList(i,1);
       k = neighborList(i,2);
       neighborTour = getNeighborhood(tour,j,k);
-      neighborTourCost = getTotalDist(neighborTour,distMap);
+      neighborTourCost = getTotalDist(neighborTour,map.distMap);
       neighborTours(i,:) = neighborTour;
       neighborTourCosts(i,:) = neighborTourCost;
     end
@@ -55,16 +54,16 @@ function [ bestCost, bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat
         bestTour = neighborMinTour;
       end
       % 悪い場合でも、確率で更新する。
-    elseif rand <= exp(-(neighborMinCost - tourCost)/temperature)
+    elseif rand <= exp(-(neighborMinCost - tourCost)/conf.temperature)
       display('climbed');
       climedCount = climedCount + 1;
       tour = neighborMinTour;
     end
 
-    probability=[ probability; exp(-(neighborTourCost - tourCost)/temperature)];
-    temperature = cool_coefficient * temperature;
-    temperature_hist = [temperature_hist;temperature];
-    tourCost = getTotalDist(tour,distMap);
+    probability=[ probability; exp(-(neighborTourCost - tourCost)/conf.temperature)];
+    conf.temperature = conf.cool_coefficient * conf.temperature;
+    temperature_hist = [temperature_hist;conf.temperature];
+    tourCost = getTotalDist(tour,map.distMap);
     eachCosts = [eachCosts ; tourCost];
     bestCosts = [bestCosts ; bestCost];
   end
@@ -75,16 +74,16 @@ function [ bestCost, bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat
     figure('Name','Initial Tour','NumberTitle','off')
     plot(x,y,'Color','red'); % draw the outside border
     hold on
-    plot(stopsLon,stopsLat,'*b')
-    drawTourPath(stopsLon,stopsLat,initTour);
+    plot(map.lon,map.lat,'*b')
+    drawTourPath(map.lon,map.lat,initTour);
     hold off
 
     % bestTour
     figure('Name','Best Tour','NumberTitle','off')
     plot(x,y,'Color','red'); % draw the outside border
     hold on
-    plot(stopsLon,stopsLat,'*b')
-    drawTourPath(stopsLon,stopsLat,bestTour);
+    plot(map.lon,map.lat,'*b')
+    drawTourPath(map.lon,map.lat,bestTour);
     hold off
 
     % 各時点での最小値の遷移

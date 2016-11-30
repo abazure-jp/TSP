@@ -7,15 +7,15 @@ close all;
 clear;
 
 %% --- Create cities and map
-nStops = 100; % you can use any number, but the problem size scales as N^2
-[distMap, stopsLon, stopsLat] = initCities(nStops);
+map.nStops = 100; % you can use any number, but the problem size scales as N^2
+[map.distMap, map.lon, map.lat] = initCities(map.nStops);
 
-%% --- params of Simulated Aneealing
-temperature = 4000;
-cool_coefficient = 0.935;
-timesNeighbor = 30;
+conf = getConfig('SimulatedAnnealing', map.nStops);
+if conf.randset == 1
+   rng(3,'twister') % makes a plot with stops in Maine & Florida, and is reproducible
+end
 
 %% --- search
-initTour = getRandomTour(nStops);
+initTour = getRandomTour(map.nStops);
 doPlot = 1;
-[ bestCost, bestTour ] = doSimulatedAnnealing(distMap,stopsLon,stopsLat,timesNeighbor,temperature,cool_coefficient,nStops,initTour,doPlot);
+[ bestCost, bestTour ] = doSimulatedAnnealing(map,conf,initTour,doPlot);
