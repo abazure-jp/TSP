@@ -20,6 +20,9 @@ map.nStops = 100; % you can use any number, but the problem size scales as N^2
 %% --- params of Genetic Algorithm
 conf = getConfig('GeneticAlgorithm', map.nStops);
 agents = zeros(conf.population,map.nStops+1);
+if conf.randset == 1
+   rng(3,'twister') % makes a plot with stops in Maine & Florida, and is reproducible
+end
 
 %% --- search
 tour = 1:map.nStops;

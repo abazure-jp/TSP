@@ -1,4 +1,5 @@
 function conf = getConfig( method , nStops)
+  conf.randset = 1;
   %% TabuSearch
   if strcmp(method,'TabuSearch')
     conf.times = 499; % 探索の回数
