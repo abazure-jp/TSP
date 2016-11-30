@@ -1,14 +1,13 @@
-function [ bestTour, bestCost, agents] = doGeneticAlgorithm(map,agents,kill,select,crossover,generations,doPlot)
-  eachBetterCosts = zeros(generations,1);
-  population = size(agents+1,1);
-  border = population - (population * kill.rate); % 上から何番目
+function [bestTour, bestCost, agents] = doGeneticAlgorithm(map,agents,conf,doPlot);
+  eachBetterCosts = zeros(conf.generations,1);
+  border = conf.population - (conf.population * conf.kill.rate); % 上から何番目
   agents = sortrows(agents,map.nStops + 1);
   cost = map.nStops + 1;
   tour = 1:map.nStops;
   eachBetterCosts(1,1) = agents(1,cost);
 
   %% --- Evolving
-  for i = 1:generations
+  for i = 1:conf.generations
     if mod(i,1000) == 0  && i >= 1000
       display(i);
     end  
@@ -16,12 +15,12 @@ function [ bestTour, bestCost, agents] = doGeneticAlgorithm(map,agents,kill,sele
     nextAgents(border:end,:) = 0;
     
     % border以下のagentは子孫を残すか突然変異
-    for j = border:population
-      if rand < crossover.rate
+    for j = border:conf.population
+      if rand < conf.crossover.rate
         % 親を決める
-        parent_idxs = selectParents(crossover.parents,agents(:,cost));
+        parent_idxs = selectParents(conf.crossover.parents,agents(:,cost));
         parents = [ agents(parent_idxs(1),tour) ; agents(parent_idxs(2),tour) ];
-        nextAgents(j,tour) = getCrossover(crossover,parents);
+        nextAgents(j,tour) = getCrossover(conf.crossover,parents);
         nextAgents(j,cost) = getTotalDist(nextAgents(j,tour),map.distMap);
       else
         % 親っていうかミュータント

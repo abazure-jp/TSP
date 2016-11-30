@@ -17,7 +17,7 @@ function [distMap, stopsLon, stopsLat] = initCities(numCities)
   % idxs: 全てのブランチを網羅した索引
   idxs = nchoosek(1:numCities,2);
 
-  % dist: 各ブランチのコストを、緯度経度をつかったピタゴラスの定理で計算する。
+  % dist: 各経路のコスト
   dist = hypot(stopsLat(idxs(:,1)) - stopsLat(idxs(:,2)), ...
                stopsLon(idxs(:,1)) - stopsLon(idxs(:,2)));
 

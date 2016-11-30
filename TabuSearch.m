@@ -6,12 +6,12 @@ clc;
 close all;
 clear;
 
-%% --- Load config
-conf = getConfig('TabuSearch');
-
 %% --- Create cities and map
 map.nStops = 100;
 [map.distMap, map.lon, map.lat] = initCities(map.nStops);
+
+%% --- Load config
+conf = getConfig( 'TabuSearch', map.nStops );
 
 %% --- params of TabuSearch
 times = conf.times; % 探索の回数

@@ -7,25 +7,23 @@ close all;
 clear;
 
 %% --- Create cities and map
-nStops = 100; % you can use any number, but the problem size scales as N^2
-[distMap, stopsLon, stopsLat] = initCities(nStops);
+map.nStops = 100;
+[map.distMap, map.lon, map.lat] = initCities(map.nStops);
 
-%% --- params of TabuSearch
-times = 299; % 探索の回数
-timesNeighbor = 30; % 近傍探索の回数
-sizeTabuList = times * 0.4;
+%% --- Load config
+conf = getConfig( 'TabuSearch', map.nStops );
 
 %% --- params of IteratedLocalSearch
 iterate = 19;
 bestCosts = zeros(iterate+1,1);
 
 %% --- Step1: output initial tour;
-initTour = getRandomTour(nStops);
+initTour = getRandomTour(map.nStops);
 
 %% --- Step2: LocalSearch(tour)
 % This code use Tabu Search (2-opt) as local search.
 doPlot = 1;
-[bestCost, bestTour] = doTabuSearch(distMap,stopsLon,stopsLat,times,timesNeighbor,sizeTabuList,nStops,initTour,doPlot);
+[ bestCost, bestTour ] = doTabuSearch(map,conf,initTour,doPlot);
 bestCosts(1,1) = bestCost;
 
 %% --- Step3: LocalSearch(tour)
@@ -34,7 +32,7 @@ bestCosts(1,1) = bestCost;
 
 for i = 1:iterate
   nextInitTour = getNOpt(bestTour,4);
-  [bestCost, bestTour] = doTabuSearch(distMap,stopsLon,stopsLat,times,timesNeighbor,sizeTabuList,nStops,nextInitTour,doPlot);
+  [ bestCost, bestTour ] = doTabuSearch(map,conf,initTour,doPlot);
   bestCosts(i+1,1) = bestCost;
 end
 
